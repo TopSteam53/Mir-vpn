@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MKR VPN — быстрый VPN без перегруженных серверов</title>
+  <meta name="description" content="MKR VPN — быстрый приватный VPN с простым подключением через Telegram. Ранний доступ для первых пользователей." />
+  <style>
+    :root {
+      --bg: #05060a;
+      --bg-soft: #0b0d14;
+      --card: rgba(255, 255, 255, 0.055);
+      --card-border: rgba(255, 255, 255, 0.10);
+      --text: #f6f7fb;
+      --muted: #9ca3af;
+      --accent: #7c5cff;
+      --accent-2: #20d3ff;
+      --green: #34d399;
+      --yellow: #fbbf24;
+      --danger: #fb7185;
+      --radius: 24px;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(124, 92, 255, 0.24), transparent 34%),
+        radial-gradient(circle at 85% 12%, rgba(32, 211, 255, 0.16), transparent 31%),
+        linear-gradient(180deg, #05060a 0%, #080a10 48%, #05060a 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(5, 6, 10, 0.72);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav-inner {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      font-size: 20px;
+    }
+
+    .logo-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid;
+      place-items: center;
+      box-shadow: 0 12px 35px rgba(124, 92, 255, 0.36);
+      font-size: 18px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: 999px;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      transition: 0.2s ease;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.10);
+    }
+
+    .btn-primary {
+      border: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      box-shadow: 0 18px 45px rgba(124, 92, 255, 0.35);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.08);
+    }
+
+    .hero {
+      padding: 86px 0 54px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 46px;
+      align-items: center;
+    }
+
+    .badge {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.055);
+      color: #d6d9e5;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(52, 211, 153, 0.12);
+    }
+
+    h1 {
+      font-size: clamp(42px, 7vw, 78px);
+      line-height: 0.94;
+      letter-spacing: -0.075em;
+      max-width: 780px;
+      margin-bottom: 24px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #fff, #d9d4ff 45%, #96ecff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-text {
+      color: var(--muted);
+      font-size: clamp(17px, 2.2vw, 21px);
+      max-width: 630px;
+      margin-bottom: 30px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .trust-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .trust-item {
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+    }
+
+    .phone-card {
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.12);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.035)),
+        rgba(255,255,255,0.04);
+      border-radius: 36px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .phone-card::before {
+      content: "";
+      position: absolute;
+      inset: -80px -80px auto auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      background: rgba(124, 92, 255, 0.25);
+      filter: blur(22px);
+    }
+
+    .vpn-panel {
+      position: relative;
+      border-radius: 28px;
+      background: #0b0d14;
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 24px;
+      min-height: 440px;
+    }
+
+    .panel-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--green);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .big-power {
+      width: 160px;
+      height: 160px;
+      margin: 18px auto;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle, rgba(32,211,255,0.23), rgba(124,92,255,0.16) 48%, transparent 70%),
+        linear-gradient(135deg, rgba(124,92,255,0.40), rgba(32,211,255,0.20));
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 0 80px rgba(124, 92, 255, 0.35);
+      font-size: 54px;
+    }
+
+    .server-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    .server-name strong {
+      display: block;
+    }
+
+    .server-name span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .load {
+      font-size: 13px;
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    section {
+      padding: 64px 0;
+    }
+
+    .section-head {
+      max-width: 720px;
+      margin-bottom: 28px;
+    }
+
+    .kicker {
+      color: var(--accent-2);
+      font-weight: 800;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: clamp(31px, 4vw, 48px);
+      line-height: 1.03;
+      letter-spacing: -0.055em;
+      margin-bottom: 14px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 22px;
+      min-height: 190px;
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: rgba(124,92,255,0.16);
+      border: 1px solid rgba(255,255,255,0.09);
+      margin-bottom: 16px;
+      font-size: 21px;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      margin-bottom: 9px;
+      letter-spacing: -0.02em;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .pricing {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .price-card {
+      position: relative;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 28px;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .price-card.featured {
+      background:
+        linear-gradient(180deg, rgba(124,92,255,0.20), rgba(255,255,255,0.055)),
+        rgba(255,255,255,0.05);
+      border-color: rgba(124,92,255,0.45);
+      box-shadow: 0 24px 80px rgba(124, 92, 255, 0.18);
+    }
+
+    .tag {
+      display: inline-flex;
+      margin-bottom: 16px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(32,211,255,0.12);
+      color: #a8f2ff;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .price {
+      font-size: 42px;
+      letter-spacing: -0.06em;
+      font-weight: 900;
+      margin: 14px 0 4px;
+    }
+
+    .price span {
+      color: var(--muted);
+      font-size: 15px;
+      letter-spacing: 0;
+      font-weight: 600;
+    }
+
+    .features {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      margin: 22px 0;
+      color: #d8dce8;
+      font-size: 15px;
+    }
+
+    .features li::before {
+      content: "✓";
+      color: var(--green);
+      font-weight: 900;
+      margin-right: 8px;
+    }
+
+    .steps {
+      counter-reset: step;
+      display: grid;
+      gap: 14px;
+    }
+
+    .step {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 15px;
+      align-items: start;
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.045);
+    }
+
+    .step::before {
+      content: counter(step);
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      font-weight: 900;
+    }
+
+    .step p {
+      color: var(--muted);
+    }
+
+    .faq {
+      display: grid;
+      gap: 12px;
+    }
+
+    details {
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.045);
+      border-radius: 20px;
+      padding: 18px 20px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    details p {
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .cta {
+      text-align: center;
+      border-radius: 34px;
+      padding: 46px 24px;
+      background:
+        radial-gradient(circle at 30% 10%, rgba(124,92,255,0.30), transparent 35%),
+        radial-gradient(circle at 75% 20%, rgba(32,211,255,0.18), transparent 30%),
+        rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: var(--shadow);
+    }
+
+    .cta p {
+      color: var(--muted);
+      max-width: 620px;
+      margin: 0 auto 24px;
+      font-size: 18px;
+    }
+
+    footer {
+      padding: 34px 0 52px;
+      color: var(--muted);
+      font-size: 14px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 920px) {
+      .hero-grid,
+      .pricing,
+      .grid-3,
+      .grid-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 56px;
+      }
+
+      .phone-card {
+        padding: 14px;
+        border-radius: 28px;
+      }
+
+      .vpn-panel {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        width: min(100% - 22px, 1120px);
+      }
+
+      .nav-inner {
+        height: 66px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .nav .btn {
+        width: auto;
+        min-height: 42px;
+        padding: 0 14px;
+        font-size: 13px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .trust-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .trust-item {
+        text-align: center;
+      }
+
+      section {
+        padding: 46px 0;
+      }
+
+      .price {
+        font-size: 36px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="#" class="logo" aria-label="MKR VPN">
+        <span class="logo-mark">⚡</span>
+        <span>MKR VPN</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#benefits">Преимущества</a>
+        <a href="#servers">Сервер</a>
+        <a href="#pricing">Тарифы</a>
+        <a href="#how">Как подключиться</a>
+        <a href="#faq">FAQ</a>
+      </div>
+
+      <a class="btn btn-primary" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Открыть бота</a>
+    </div>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="badge"><span class="dot"></span> Ранний доступ для первых пользователей</div>
+          <h1><span class="gradient-text">Быстрый VPN</span> без перегруженных серверов</h1>
+          <p class="hero-text">
+            Простой доступ к VPN через Telegram: получаете QR-код, подключаете телефон или компьютер и пользуетесь без сложных настроек.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Получить ранний доступ</a>
+            <a class="btn" href="#pricing">Посмотреть тарифы</a>
+          </div>
+
+          <div class="trust-row">
+            <span class="trust-item">до 3 устройств</span>
+            <span class="trust-item">личная поддержка</span>
+            <span class="trust-item">QR-код</span>
+            <span class="trust-item">1 сервер на старте</span>
+          </div>
+        </div>
+
+        <div class="phone-card" aria-label="Демо интерфейса VPN">
+          <div class="vpn-panel">
+            <div class="panel-top">
+              <strong>MKR VPN</strong>
+              <span class="status"><span class="dot"></span> скоро запуск</span>
+            </div>
+
+            <div class="big-power">⏻</div>
+
+            <div style="text-align:center; margin-bottom: 22px;">
+              <h3>Германия</h3>
+              <p style="color:var(--muted);">первая локация для подключения</p>
+            </div>
+
+            <div class="server-row">
+              <div class="server-name">
+                <strong>🇩🇪 Germany Node 1</strong>
+                <span>WireGuard / AmneziaWG</span>
+              </div>
+              <div class="load">готовим</div>
+            </div>
+
+            <div class="server-row">
+              <div class="server-name">
+                <strong>Подключение</strong>
+                <span>через Telegram-бота</span>
+              </div>
+              <div class="load">QR</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="benefits">
+      <div class="container">
+        <div class="section-head">
+          <div class="kicker">Почему не просто “ещё один VPN”</div>
+          <h2>Маленький сервис, где сервер не забивается сотнями пользователей</h2>
+          <p>На старте делаем один аккуратный сервер для небольшого числа людей. Когда нагрузка вырастет — добавим новую ноду.</p>
+        </div>
+
+        <div class="grid-4">
+          <article class="card">
+            <div class="icon">🚀</div>
+            <h3>Скорость</h3>
+            <p>Ставка не на количество стран, а на стабильную работу и низкую нагрузку.</p>
+          </article>
+
+          <article class="card">
+            <div class="icon">📱</div>
+            <h3>Простое подключение</h3>
+            <p>Получаете QR-код в Telegram и подключаетесь через приложение WireGuard или AmneziaVPN.</p>
+          </article>
+
+          <article class="card">
+            <div class="icon">💬</div>
+            <h3>Поддержка</h3>
+            <p>Если не получилось настроить — поможем вручную в Telegram.</p>
+          </article>
+
+          <article class="card">
+            <div class="icon">🔐</div>
+            <h3>Доступ по подписке</h3>
+            <p>Контроль срока доступа, устройств и конфигураций без лишней сложности.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="servers">
+      <div class="container">
+        <div class="section-head">
+          <div class="kicker">Сервер</div>
+          <h2>На старте — одна быстрая локация</h2>
+          <p>Пока не показываем выдуманные пинги и проценты нагрузки. Первый сервер подключим после теста.</p>
+        </div>
+
+        <div class="grid-3">
+          <article class="card">
+            <div class="icon">🇩🇪</div>
+            <h3>Германия</h3>
+            <p>Первая локация. Подходит для Европы, России и повседневного использования.</p>
+          </article>
+
+          <article class="card">
+            <div class="icon">🇳🇱</div>
+            <h3>Нидерланды</h3>
+            <p>Будущая локация, если появятся первые платящие пользователи.</p>
+          </article>
+
+          <article class="card">
+            <div class="icon">🇺🇸</div>
+            <h3>США</h3>
+            <p>Будущая локация для контента, сервисов и расширения проекта.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing">
+      <div class="container">
+        <div class="section-head">
+          <div class="kicker">Тарифы</div>
+          <h2>Без демпинга и вечных скидок</h2>
+          <p>Первые пользователи получают цену ниже на 3 месяца, дальше переходят на обычный тариф.</p>
+        </div>
+
+        <div class="pricing">
+          <article class="price-card featured">
+            <span class="tag">Первые 10 мест</span>
+            <h3>Ранний доступ</h3>
+            <div class="price">149 ₽ <span>/ месяц</span></div>
+            <p style="color:var(--muted);">Цена действует первые 3 месяца. Потом — 199 ₽/мес.</p>
+            <ul class="features">
+              <li>до 3 устройств</li>
+              <li>QR-код для подключения</li>
+              <li>помощь в Telegram</li>
+              <li>первая локация Германия</li>
+            </ul>
+            <a class="btn btn-primary" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Занять место</a>
+          </article>
+
+          <article class="price-card">
+            <span class="tag">Стандарт</span>
+            <h3>1 месяц</h3>
+            <div class="price">199 ₽ <span>/ месяц</span></div>
+            <p style="color:var(--muted);">Базовый тариф после запуска проекта.</p>
+            <ul class="features">
+              <li>до 3 устройств</li>
+              <li>безлимитный трафик</li>
+              <li>замена конфига при необходимости</li>
+              <li>поддержка в Telegram</li>
+            </ul>
+            <a class="btn" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Выбрать</a>
+          </article>
+
+          <article class="price-card">
+            <span class="tag">Выгоднее</span>
+            <h3>3 месяца</h3>
+            <div class="price">499 ₽</div>
+            <p style="color:var(--muted);">Удобно тем, кто не хочет продлевать каждый месяц.</p>
+            <ul class="features">
+              <li>примерно 166 ₽/мес</li>
+              <li>до 3 устройств</li>
+              <li>личная помощь</li>
+              <li>уведомление перед окончанием</li>
+            </ul>
+            <a class="btn" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Купить</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="container">
+        <div class="section-head">
+          <div class="kicker">Как подключиться</div>
+          <h2>Всё через Telegram, без сложного личного кабинета</h2>
+          <p>Пока проект маленький, бот заменяет приложение и личный кабинет.</p>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <div>
+              <h3>Открываете Telegram-бота</h3>
+              <p>Бот регистрирует заявку и показывает доступные тарифы.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div>
+              <h3>Оплачиваете доступ</h3>
+              <p>На старте можно использовать ручную оплату. Автоплатежи добавим позже.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div>
+              <h3>Получаете QR-код</h3>
+              <p>Добавляете конфигурацию в WireGuard или AmneziaVPN.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div>
+              <h3>Подключаетесь</h3>
+              <p>Если что-то не получилось, поддержка поможет настроить вручную.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="container">
+        <div class="section-head">
+          <div class="kicker">FAQ</div>
+          <h2>Частые вопросы</h2>
+        </div>
+
+        <div class="faq">
+          <details>
+            <summary>Это мобильное приложение?</summary>
+            <p>Пока нет. На старте подключение будет через готовые приложения WireGuard или AmneziaVPN. Собственное приложение можно сделать позже, когда появятся клиенты.</p>
+          </details>
+
+          <details>
+            <summary>Почему не 100 ₽?</summary>
+            <p>Мы не делаем ставку на демпинг. Наша идея — не перегружать сервер и помогать с подключением, поэтому базовая цена 199 ₽/мес.</p>
+          </details>
+
+          <details>
+            <summary>Сколько устройств можно подключить?</summary>
+            <p>На стандартном тарифе — до 3 устройств. Для большего количества устройств можно согласовать отдельный доступ.</p>
+          </details>
+
+          <details>
+            <summary>Когда появятся другие страны?</summary>
+            <p>После первых пользователей и проверки нагрузки. Сначала запускаем Германию, потом добавим Нидерланды и США.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="cta">
+          <h2>Хочешь попасть в первые 10 пользователей?</h2>
+          <p>Оставь заявку через Telegram-бота. Первые места получают цену 149 ₽/мес на первые 3 месяца.</p>
+          <a class="btn btn-primary" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Получить ранний доступ</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>© 2026 MKR VPN. Рабочий MVP-сайт.</div>
+      <div class="footer-links">
+        <a href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Telegram</a>
+        <a href="#pricing">Тарифы</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
