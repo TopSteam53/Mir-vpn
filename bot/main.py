@@ -138,9 +138,11 @@ async def upsert_user(message: Message) -> None:
 async def get_user(telegram_id: int) -> dict | None:
     async with aiosqlite.connect(DB_PATH) as db:
         db.row_factory = aiosqlite.Row
-        row = await db.execute_fetchone(
-            "SELECT * FROM users WHERE telegram_id = ?", (telegram_id,)
-        )
+        async with db.execute(
+            "SELECT * FROM users WHERE telegram_id = ?",
+            (telegram_id,),
+        ) as cursor:
+            row = await cursor.fetchone()
         return dict(row) if row else None
 
 
