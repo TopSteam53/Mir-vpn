@@ -2,685 +2,603 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Korda VPN — стабильный VPN для своих</title>
-  <meta name="description" content="Korda VPN — стабильный VPN с подключением через Telegram, QR-кодом и поддержкой." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Korda VPN</title>
   <style>
     :root {
-      --bg: #07080b;
-      --bg2: #0d0f14;
-      --card: #10131a;
-      --card2: #151924;
-      --line: rgba(255,255,255,.09);
-      --text: #f5f7fb;
-      --muted: #9ba3b4;
-      --muted2: #697080;
-      --accent: #9cffc7;
-      --accent2: #6d8dff;
-      --danger: #ff6b81;
-      --radius: 28px;
-      --shadow: 0 35px 120px rgba(0,0,0,.45);
+      --bg: #000;
+      --card: #1c1c1f;
+      --card-2: #171719;
+      --text: #f5f5f7;
+      --muted: #8e8e93;
+      --muted-2: #5f5f66;
+      --accent: #ff3b30;
+      --green: #31d158;
+      --gold: #c4a22f;
+      --line: rgba(255,255,255,.08);
+      --radius: 30px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-    html { scroll-behavior: smooth; }
+    html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); }
 
     body {
-      min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(circle at 76% 5%, rgba(109,141,255,.18), transparent 32%),
-        radial-gradient(circle at 12% 12%, rgba(156,255,199,.10), transparent 30%),
-        linear-gradient(180deg, #07080b 0%, #0b0d12 48%, #07080b 100%);
-      color: var(--text);
-      line-height: 1.5;
-      overflow-x: hidden;
-    }
-
-    a { color: inherit; text-decoration: none; }
-
-    .container {
-      width: min(1120px, calc(100% - 32px));
-      margin: 0 auto;
-    }
-
-    .nav {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(7,8,11,.78);
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--line);
-    }
-
-    .nav-inner {
-      height: 72px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
       display: flex;
-      align-items: center;
+      justify-content: center;
+    }
+
+    button, a { font: inherit; }
+
+    .app {
+      width: min(100%, 430px);
+      min-height: 100svh;
+      padding: max(22px, env(safe-area-inset-top)) 24px max(18px, env(safe-area-inset-bottom));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .top {
+      display: flex;
+      align-items: flex-start;
       justify-content: space-between;
-      gap: 18px;
+      padding-top: 20px;
+      margin-bottom: 74px;
     }
 
-    .brand {
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(46px, 13vw, 62px);
+      line-height: .9;
+      letter-spacing: -0.07em;
+      font-weight: 900;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+
+    .plus {
+      width: 54px;
+      height: 54px;
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      font-size: 58px;
+      line-height: 46px;
+      font-weight: 200;
+      cursor: pointer;
+    }
+
+    .main-card {
+      min-height: 468px;
+      border-radius: var(--radius);
+      background: var(--card);
+      padding: 28px 26px 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 26px 80px rgba(0,0,0,.38);
+    }
+
+    .location {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-weight: 850;
-      letter-spacing: -.04em;
-      font-size: 20px;
+      gap: 10px;
+      font-size: 32px;
+      line-height: 1;
+      letter-spacing: -0.055em;
+      font-weight: 900;
     }
 
-    .mark {
-      width: 38px;
-      height: 38px;
-      border-radius: 14px;
+    .location small { font-size: 24px; letter-spacing: 0; }
+
+    .big-logo {
+      flex: 1;
       display: grid;
       place-items: center;
-      color: #07100b;
-      background: linear-gradient(135deg, var(--accent), #ffffff);
-      box-shadow: 0 18px 55px rgba(156,255,199,.16);
-      font-weight: 950;
+      text-align: center;
     }
 
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .nav-links a:hover { color: var(--text); }
-
-    .btn {
-      min-height: 48px;
-      padding: 0 20px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.045);
-      color: var(--text);
-      font-weight: 750;
-      transition: .18s ease;
-      white-space: nowrap;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.075);
-    }
-
-    .btn-main {
-      border: 0;
-      color: #07100b;
-      background: linear-gradient(135deg, var(--accent), #ffffff);
-      box-shadow: 0 20px 70px rgba(156,255,199,.18);
-    }
-
-    .hero {
-      padding: 92px 0 72px;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.08fr .92fr;
-      gap: 48px;
-      align-items: center;
-    }
-
-    .eyebrow {
-      width: fit-content;
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      color: #d7ffe7;
-      background: rgba(156,255,199,.08);
-      border: 1px solid rgba(156,255,199,.18);
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 22px;
-    }
-
-    .pulse {
-      width: 8px;
-      height: 8px;
-      border-radius: 99px;
-      background: var(--accent);
-      box-shadow: 0 0 0 6px rgba(156,255,199,.11);
-    }
-
-    h1 {
-      max-width: 760px;
-      font-size: clamp(46px, 7vw, 88px);
-      line-height: .9;
-      letter-spacing: -.08em;
-      margin-bottom: 24px;
-    }
-
-    .lead {
-      max-width: 590px;
-      color: var(--muted);
-      font-size: clamp(17px, 2vw, 21px);
-      margin-bottom: 30px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 26px;
-    }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .chip {
-      color: #d6dbe8;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 14px;
-    }
-
-    .panel {
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
-      border-radius: 34px;
-      padding: 18px;
-      box-shadow: var(--shadow);
-    }
-
-    .server-card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 26px;
-      padding: 24px;
-    }
-
-    .server-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 34px;
+    .letter {
+      font-size: clamp(180px, 48vw, 230px);
+      line-height: .78;
+      color: var(--gold);
+      font-weight: 1000;
+      letter-spacing: -0.13em;
+      transform: translateX(-8px);
+      filter: drop-shadow(0 18px 20px rgba(0,0,0,.14));
+      user-select: none;
     }
 
     .status {
-      color: #061008;
-      background: var(--accent);
-      border-radius: 999px;
-      padding: 7px 10px;
-      font-weight: 850;
-      font-size: 12px;
+      margin-top: 26px;
+      color: var(--muted);
+      font-size: 22px;
+      letter-spacing: -0.025em;
+      font-weight: 500;
     }
 
-    .server-title {
-      font-size: 32px;
-      letter-spacing: -.05em;
+    .status.connected { color: var(--green); }
+
+    .card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 48px;
+    }
+
+    .dots {
+      color: var(--text);
+      font-size: 30px;
+      line-height: 1;
+      letter-spacing: 2px;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .power {
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 22px;
+      letter-spacing: -0.025em;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+      padding: 10px 0;
+    }
+
+    .power.on { color: var(--accent); }
+
+    .quick {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .tile {
+      border: 0;
+      min-height: 100px;
+      border-radius: 18px;
+      background: var(--card);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+    }
+
+    .tile b { font-size: 22px; line-height: 1; }
+    .tile span { color: var(--muted); font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .stat {
+      padding: 14px 12px;
+      border-radius: 18px;
+      background: var(--card-2);
+      border: 1px solid var(--line);
+    }
+
+    .stat small {
+      display: block;
+      color: var(--muted-2);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
       margin-bottom: 6px;
     }
 
-    .server-sub { color: var(--muted); }
-
-    .meter {
-      height: 10px;
-      background: rgba(255,255,255,.07);
-      border-radius: 999px;
-      overflow: hidden;
-      margin: 26px 0 18px;
-    }
-
-    .meter span {
+    .stat strong {
       display: block;
-      height: 100%;
-      width: 18%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      border-radius: inherit;
+      font-size: 17px;
+      letter-spacing: -0.03em;
     }
 
-    .rows {
-      display: grid;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 14px 0;
-      border-top: 1px solid var(--line);
-      color: var(--muted);
-    }
-
-    .row strong { color: var(--text); }
-
-    section { padding: 62px 0; }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 22px;
-      margin-bottom: 22px;
-    }
-
-    .section-head h2 {
-      font-size: clamp(32px, 4vw, 52px);
-      line-height: 1;
-      letter-spacing: -.06em;
-      max-width: 680px;
-    }
-
-    .section-head p {
-      color: var(--muted);
-      max-width: 360px;
-    }
-
-    .grid-3 {
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: max(16px, env(safe-area-inset-bottom));
+      width: min(100% - 48px, 382px);
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
+      gap: 8px;
+      pointer-events: none;
     }
 
-    .card {
-      min-height: 180px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 24px;
-    }
-
-    .num {
-      color: var(--accent);
-      font-weight: 900;
-      margin-bottom: 32px;
-    }
-
-    .card h3 {
-      font-size: 20px;
-      letter-spacing: -.025em;
-      margin-bottom: 8px;
-    }
-
-    .card p { color: var(--muted); }
-
-    .pricing {
+    .nav-item {
+      pointer-events: auto;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      min-height: 58px;
       display: grid;
-      grid-template-columns: .92fr 1.08fr;
-      gap: 14px;
+      place-items: center;
+      gap: 2px;
+      cursor: pointer;
     }
 
-    .price-card {
-      background: var(--card);
+    .nav-item b { font-size: 28px; line-height: 1; }
+    .nav-item span { font-size: 14px; }
+    .nav-item.active { color: #b8b8c0; }
+
+    .sheet {
+      position: fixed;
+      inset: auto 0 0 0;
+      z-index: 50;
+      display: none;
+      justify-content: center;
+      padding: 0 16px max(16px, env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,.72) 24%);
+    }
+
+    .sheet.open { display: flex; }
+
+    .sheet-card {
+      width: min(100%, 430px);
+      border-radius: 28px;
+      background: #202024;
+      padding: 22px;
       border: 1px solid var(--line);
-      border-radius: 30px;
-      padding: 26px;
+      box-shadow: 0 -20px 90px rgba(0,0,0,.55);
     }
 
-    .price-card.main {
-      background:
-        radial-gradient(circle at 90% 0%, rgba(156,255,199,.14), transparent 34%),
-        var(--card2);
-      border-color: rgba(156,255,199,.22);
-    }
-
-    .tag {
-      display: inline-flex;
-      color: #d7ffe7;
-      border: 1px solid rgba(156,255,199,.20);
-      background: rgba(156,255,199,.07);
-      border-radius: 999px;
-      padding: 7px 10px;
-      font-weight: 850;
-      font-size: 12px;
+    .sheet-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 18px;
     }
 
-    .price {
-      font-size: clamp(44px, 5vw, 62px);
-      line-height: 1;
-      letter-spacing: -.075em;
-      font-weight: 950;
-      margin: 18px 0 10px;
+    .sheet h2 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: -0.04em;
     }
 
-    .price small {
-      color: var(--muted);
-      font-size: 16px;
-      letter-spacing: 0;
-    }
-
-    .list {
-      list-style: none;
-      display: grid;
-      gap: 10px;
-      margin: 24px 0 26px;
-      color: #d7dce8;
-    }
-
-    .list li::before {
-      content: "—";
-      color: var(--accent);
-      margin-right: 8px;
-    }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-    }
-
-    .faq {
-      display: grid;
-      gap: 10px;
-      max-width: 820px;
-    }
-
-    details {
-      background: rgba(255,255,255,.035);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 18px 20px;
-    }
-
-    summary {
+    .close {
+      width: 38px;
+      height: 38px;
+      border-radius: 99px;
+      border: 0;
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      font-size: 22px;
       cursor: pointer;
-      font-weight: 820;
     }
 
-    details p {
-      color: var(--muted);
-      margin-top: 10px;
-    }
+    .list { display: grid; gap: 10px; }
 
-    .final {
-      padding-bottom: 92px;
-    }
-
-    .cta {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 18px;
-      background: linear-gradient(135deg, rgba(156,255,199,.09), rgba(109,141,255,.08));
+    .row {
+      width: 100%;
+      min-height: 62px;
       border: 1px solid var(--line);
-      border-radius: 34px;
-      padding: 34px;
-    }
-
-    .cta h2 {
-      font-size: clamp(30px, 4vw, 50px);
-      letter-spacing: -.06em;
-      line-height: 1;
-      margin-bottom: 10px;
-    }
-
-    .cta p { color: var(--muted); }
-
-    footer {
-      padding: 28px 0 44px;
-      color: var(--muted2);
-      border-top: 1px solid var(--line);
-      font-size: 14px;
-    }
-
-    .footer-inner {
+      border-radius: 18px;
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding: 13px 14px;
       display: flex;
+      align-items: center;
       justify-content: space-between;
       gap: 14px;
-      flex-wrap: wrap;
+      text-align: left;
+      cursor: pointer;
     }
 
-    @media (max-width: 920px) {
-      .hero-grid,
-      .grid-3,
-      .pricing,
-      .steps,
-      .cta {
-        grid-template-columns: 1fr;
-      }
+    .row div { display: grid; gap: 3px; }
+    .row strong { font-size: 17px; }
+    .row span { color: var(--muted); font-size: 13px; }
 
-      .nav-links { display: none; }
-
-      .hero { padding-top: 62px; }
-
-      .section-head {
-        display: block;
-      }
-
-      .section-head p { margin-top: 12px; }
+    .primary {
+      width: 100%;
+      min-height: 56px;
+      margin-top: 14px;
+      border: 0;
+      border-radius: 18px;
+      color: #000;
+      background: var(--text);
+      font-weight: 900;
+      font-size: 16px;
+      cursor: pointer;
     }
 
-    @media (max-width: 520px) {
-      .container { width: min(100% - 22px, 1120px); }
-      .nav-inner { height: 66px; }
-      .nav .btn { min-height: 42px; padding: 0 14px; font-size: 13px; }
-      .actions .btn { width: 100%; }
-      .hero { padding: 44px 0 36px; }
-      h1 { font-size: 48px; }
-      section { padding: 42px 0; }
-      .panel { padding: 10px; border-radius: 28px; }
-      .server-card, .price-card, .card, .cta { border-radius: 24px; padding: 20px; }
-      .chips { display: grid; grid-template-columns: 1fr 1fr; }
-      .chip { text-align: center; font-size: 13px; }
+    .ghost {
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+    }
+
+    .note {
+      margin: 12px 2px 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    @media (min-width: 760px) {
+      body { align-items: center; min-height: 100vh; }
+      .app {
+        min-height: 860px;
+        border-left: 1px solid var(--line);
+        border-right: 1px solid var(--line);
+      }
+    }
+
+    @media (max-height: 780px) {
+      .top { margin-bottom: 36px; }
+      .main-card { min-height: 410px; }
+      .letter { font-size: 170px; }
+      .stats { display: none; }
     }
   </style>
 </head>
 <body>
-  <nav class="nav">
-    <div class="container nav-inner">
-      <a class="brand" href="#">
-        <span class="mark">K</span>
-        <span>Korda VPN</span>
-      </a>
-
-      <div class="nav-links">
-        <a href="#why">Почему</a>
-        <a href="#price">Цена</a>
-        <a href="#connect">Подключение</a>
-        <a href="#faq">FAQ</a>
+  <main class="app">
+    <header class="top">
+      <div class="brand">
+        <h1>Korda</h1>
+        <span>версия 0.1.0</span>
       </div>
-
-      <a class="btn btn-main" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Telegram</a>
-    </div>
-  </nav>
-
-  <main>
-    <header class="hero">
-      <div class="container hero-grid">
-        <div>
-          <div class="eyebrow"><span class="pulse"></span> Ранний доступ открыт</div>
-          <h1>VPN для своих. Без лишнего шума.</h1>
-          <p class="lead">Стабильное подключение через Telegram. Получаешь QR-код, добавляешь в приложение и пользуешься.</p>
-
-          <div class="actions">
-            <a class="btn btn-main" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Получить доступ</a>
-            <a class="btn" href="#price">Посмотреть цену</a>
-          </div>
-
-          <div class="chips">
-            <span class="chip">149 ₽ первые 3 месяца</span>
-            <span class="chip">потом 199 ₽/мес</span>
-            <span class="chip">до 3 устройств</span>
-            <span class="chip">поддержка в Telegram</span>
-          </div>
-        </div>
-
-        <aside class="panel">
-          <div class="server-card">
-            <div class="server-top">
-              <div>
-                <strong>Korda Node</strong>
-                <p class="server-sub">первый сервер</p>
-              </div>
-              <span class="status">готовим</span>
-            </div>
-
-            <h2 class="server-title">🇩🇪 Германия</h2>
-            <p class="server-sub">Одна локация на старте. Без десятков фейковых стран и пустых обещаний.</p>
-
-            <div class="meter"><span></span></div>
-
-            <div class="rows">
-              <div class="row"><span>Протокол</span><strong>WireGuard / AWG</strong></div>
-              <div class="row"><span>Доступ</span><strong>QR-код</strong></div>
-              <div class="row"><span>Лимит</span><strong>до 3 устройств</strong></div>
-            </div>
-          </div>
-        </aside>
-      </div>
+      <button class="plus" type="button" onclick="openSheet('config')">+</button>
     </header>
 
-    <section id="why">
-      <div class="container">
-        <div class="section-head">
-          <h2>Просто нормальный VPN</h2>
-          <p>Без огромных обещаний. Делаем маленький сервис, который удобно подключить и легко поддерживать.</p>
+    <section class="main-card">
+      <div class="location" id="locationTitle">Германия <small>🇩🇪</small></div>
+
+      <div class="big-logo">
+        <div>
+          <div class="letter">K</div>
+          <div class="status" id="statusText">Отключено</div>
         </div>
+      </div>
 
-        <div class="grid-3">
-          <article class="card">
-            <div class="num">01</div>
-            <h3>Не забиваем сервер</h3>
-            <p>Стартуем с небольшой аудитории. Если нагрузка растёт — добавляем новую ноду.</p>
-          </article>
-
-          <article class="card">
-            <div class="num">02</div>
-            <h3>Подключение без боли</h3>
-            <p>QR-код и короткая инструкция. Не понял — пишешь в поддержку.</p>
-          </article>
-
-          <article class="card">
-            <div class="num">03</div>
-            <h3>Цена без демпинга</h3>
-            <p>Не 100 ₽ за перегруженный доступ. Нормальная цена за аккуратный сервис.</p>
-          </article>
-        </div>
+      <div class="card-bottom">
+        <button class="dots" type="button" onclick="openSheet('config')">•••</button>
+        <button class="power" id="powerBtn" type="button" onclick="toggleVpn()">ПОДКЛЮЧИТЬ</button>
       </div>
     </section>
 
-    <section id="price">
-      <div class="container">
-        <div class="section-head">
-          <h2>Тарифы</h2>
-          <p>Для первых пользователей цена ниже только на первые 3 месяца.</p>
-        </div>
+    <div class="quick">
+      <button class="tile" type="button" onclick="openSheet('location')">
+        <b>🌍</b>
+        <span>Локация</span>
+      </button>
+      <button class="tile" type="button" onclick="openSheet('tunnel')">
+        <b>⌘</b>
+        <span>Туннель</span>
+      </button>
+      <button class="tile" type="button" onclick="openSheet('support')">
+        <b>💬</b>
+        <span>Поддержка</span>
+      </button>
+    </div>
 
-        <div class="pricing">
-          <article class="price-card main">
-            <span class="tag">первые 10 мест</span>
-            <h3>Ранний доступ</h3>
-            <div class="price">149 ₽ <small>/ месяц</small></div>
-            <p class="server-sub">Первые 3 месяца. Потом 199 ₽/мес.</p>
-            <ul class="list">
-              <li>до 3 устройств</li>
-              <li>QR-код для подключения</li>
-              <li>поддержка в Telegram</li>
-              <li>локация Германия</li>
-            </ul>
-            <a class="btn btn-main" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Занять место</a>
-          </article>
-
-          <article class="price-card">
-            <span class="tag">стандарт</span>
-            <h3>После запуска</h3>
-            <div class="price">199 ₽ <small>/ месяц</small></div>
-            <p class="server-sub">Основной тариф после раннего доступа.</p>
-            <ul class="list">
-              <li>до 3 устройств</li>
-              <li>замена конфига при необходимости</li>
-              <li>уведомление перед окончанием</li>
-              <li>помощь с настройкой</li>
-            </ul>
-            <a class="btn" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Написать в Telegram</a>
-          </article>
-        </div>
+    <div class="stats">
+      <div class="stat">
+        <small>Статус</small>
+        <strong id="statStatus">offline</strong>
       </div>
-    </section>
-
-    <section id="connect">
-      <div class="container">
-        <div class="section-head">
-          <h2>Как подключиться</h2>
-          <p>На старте всё идёт через Telegram. Без отдельного приложения и личного кабинета.</p>
-        </div>
-
-        <div class="steps">
-          <article class="card">
-            <div class="num">1</div>
-            <h3>Открываешь бота</h3>
-            <p>Жмёшь кнопку и оставляешь заявку.</p>
-          </article>
-          <article class="card">
-            <div class="num">2</div>
-            <h3>Получаешь QR</h3>
-            <p>После активации приходит конфиг и инструкция.</p>
-          </article>
-          <article class="card">
-            <div class="num">3</div>
-            <h3>Подключаешься</h3>
-            <p>Работает на телефоне и компьютере через готовое VPN-приложение.</p>
-          </article>
-        </div>
+      <div class="stat">
+        <small>Пинг</small>
+        <strong id="statPing">—</strong>
       </div>
-    </section>
-
-    <section id="faq">
-      <div class="container">
-        <div class="section-head">
-          <h2>Вопросы</h2>
-        </div>
-
-        <div class="faq">
-          <details>
-            <summary>Это отдельное приложение?</summary>
-            <p>Пока нет. Сначала подключение через WireGuard или AmneziaVPN. Своё приложение можно сделать позже.</p>
-          </details>
-          <details>
-            <summary>Почему только Германия?</summary>
-            <p>На старте важнее стабильность, чем список стран. Новые локации добавим после первых клиентов.</p>
-          </details>
-          <details>
-            <summary>Можно подключить несколько устройств?</summary>
-            <p>Да, до 3 устройств на одном доступе.</p>
-          </details>
-          <details>
-            <summary>Что если не получится настроить?</summary>
-            <p>Напишешь в Telegram — поможем подключиться вручную.</p>
-          </details>
-        </div>
+      <div class="stat">
+        <small>Время</small>
+        <strong id="statTime">00:00</strong>
       </div>
-    </section>
+    </div>
 
-    <section class="final">
-      <div class="container">
-        <div class="cta">
-          <div>
-            <h2>Забрать ранний доступ</h2>
-            <p>149 ₽/мес на первые 3 месяца. Потом стандартная цена — 199 ₽/мес.</p>
-          </div>
-          <a class="btn btn-main" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Перейти в Telegram</a>
-        </div>
-      </div>
-    </section>
+    <nav class="bottom-nav">
+      <button class="nav-item active" type="button"><b>🔒</b><span>VPN</span></button>
+      <button class="nav-item" type="button" onclick="openSheet('config')"><b>⚙️</b><span>Конфиг</span></button>
+      <button class="nav-item" type="button" onclick="openSheet('about')"><b>ⓘ</b><span>О сервисе</span></button>
+    </nav>
   </main>
 
-  <footer>
-    <div class="container footer-inner">
-      <span>© 2026 Korda VPN</span>
-      <span>Стабильный VPN для своих</span>
+  <div class="sheet" id="sheet" onclick="closeSheet(event)">
+    <div class="sheet-card" onclick="event.stopPropagation()">
+      <div class="sheet-head">
+        <h2 id="sheetTitle">Korda VPN</h2>
+        <button class="close" type="button" onclick="closeSheet()">×</button>
+      </div>
+      <div id="sheetContent"></div>
     </div>
-  </footer>
+  </div>
+
+  <script>
+    const botUrl = 'https://t.me/YOUR_BOT_USERNAME';
+    const configUrl = './korda.conf';
+
+    const state = {
+      connected: localStorage.getItem('korda_connected') === '1',
+      location: localStorage.getItem('korda_location') || 'Германия 🇩🇪',
+      tunnel: localStorage.getItem('korda_tunnel') || 'WireGuard',
+      startedAt: Number(localStorage.getItem('korda_started_at') || Date.now())
+    };
+
+    let timer = null;
+
+    function render() {
+      const powerBtn = document.getElementById('powerBtn');
+      const statusText = document.getElementById('statusText');
+      const statStatus = document.getElementById('statStatus');
+      const statPing = document.getElementById('statPing');
+      const locationTitle = document.getElementById('locationTitle');
+
+      const [name, flag] = state.location.split(' ');
+      locationTitle.innerHTML = `${name} <small>${flag || ''}</small>`;
+
+      if (state.connected) {
+        statusText.textContent = 'Подключено';
+        statusText.classList.add('connected');
+        powerBtn.textContent = 'ОТКЛЮЧИТЬ';
+        powerBtn.classList.add('on');
+        statStatus.textContent = 'online';
+        statPing.textContent = '38 ms';
+        startTimer();
+      } else {
+        statusText.textContent = 'Отключено';
+        statusText.classList.remove('connected');
+        powerBtn.textContent = 'ПОДКЛЮЧИТЬ';
+        powerBtn.classList.remove('on');
+        statStatus.textContent = 'offline';
+        statPing.textContent = '—';
+        document.getElementById('statTime').textContent = '00:00';
+        stopTimer();
+      }
+    }
+
+    function toggleVpn() {
+      if (!state.connected) {
+        openSheet('connect');
+        return;
+      }
+      state.connected = false;
+      localStorage.setItem('korda_connected', '0');
+      render();
+    }
+
+    function connectDemo() {
+      state.connected = true;
+      state.startedAt = Date.now();
+      localStorage.setItem('korda_connected', '1');
+      localStorage.setItem('korda_started_at', String(state.startedAt));
+      closeSheet();
+      render();
+    }
+
+    function startTimer() {
+      stopTimer();
+      timer = setInterval(() => {
+        const sec = Math.floor((Date.now() - state.startedAt) / 1000);
+        const m = String(Math.floor(sec / 60)).padStart(2, '0');
+        const s = String(sec % 60).padStart(2, '0');
+        document.getElementById('statTime').textContent = `${m}:${s}`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timer) clearInterval(timer);
+      timer = null;
+    }
+
+    function setLocation(value) {
+      state.location = value;
+      localStorage.setItem('korda_location', value);
+      closeSheet();
+      render();
+    }
+
+    function setTunnel(value) {
+      state.tunnel = value;
+      localStorage.setItem('korda_tunnel', value);
+      closeSheet();
+    }
+
+    function openSheet(type) {
+      const sheet = document.getElementById('sheet');
+      const title = document.getElementById('sheetTitle');
+      const content = document.getElementById('sheetContent');
+
+      const templates = {
+        connect: {
+          title: 'Подключение',
+          html: `
+            <div class="list">
+              <button class="row" onclick="connectDemo()">
+                <div><strong>Включить демо-статус</strong><span>Покажет состояние подключения на сайте</span></div><span>→</span>
+              </button>
+              <a class="row" href="${configUrl}" download>
+                <div><strong>Скачать конфиг</strong><span>Файл для WireGuard / AmneziaVPN</span></div><span>↓</span>
+              </a>
+              <a class="row" href="${botUrl}" target="_blank">
+                <div><strong>Открыть Telegram</strong><span>Получить QR-код и помощь</span></div><span>↗</span>
+              </a>
+            </div>
+            <p class="note">Сайт не может сам включить VPN в системе. Реальное подключение идёт через WireGuard/AmneziaVPN или через будущее мобильное приложение.</p>
+          `
+        },
+        location: {
+          title: 'Локация',
+          html: `
+            <div class="list">
+              <button class="row" onclick="setLocation('Германия 🇩🇪')"><div><strong>Германия 🇩🇪</strong><span>Основной сервер</span></div><span>✓</span></button>
+              <button class="row" onclick="setLocation('Нидерланды 🇳🇱')"><div><strong>Нидерланды 🇳🇱</strong><span>Скоро</span></div><span>＋</span></button>
+              <button class="row" onclick="setLocation('США 🇺🇸')"><div><strong>США 🇺🇸</strong><span>Скоро</span></div><span>＋</span></button>
+            </div>
+          `
+        },
+        tunnel: {
+          title: 'Туннель',
+          html: `
+            <div class="list">
+              <button class="row" onclick="setTunnel('WireGuard')"><div><strong>WireGuard</strong><span>Быстрый стандартный режим</span></div><span>✓</span></button>
+              <button class="row" onclick="setTunnel('AmneziaWG')"><div><strong>AmneziaWG</strong><span>Режим на будущее</span></div><span>＋</span></button>
+            </div>
+          `
+        },
+        support: {
+          title: 'Поддержка',
+          html: `
+            <a class="row" href="${botUrl}" target="_blank"><div><strong>Написать в Telegram</strong><span>Помощь с подключением и конфигом</span></div><span>↗</span></a>
+            <button class="primary ghost" onclick="closeSheet()">Закрыть</button>
+          `
+        },
+        config: {
+          title: 'Конфиг',
+          html: `
+            <div class="list">
+              <a class="row" href="${configUrl}" download><div><strong>Скачать korda.conf</strong><span>Положим сюда реальный файл после настройки сервера</span></div><span>↓</span></a>
+              <a class="row" href="${botUrl}" target="_blank"><div><strong>Получить QR-код</strong><span>Через Telegram-бота</span></div><span>↗</span></a>
+            </div>
+          `
+        },
+        about: {
+          title: 'Korda VPN',
+          html: `
+            <div class="list">
+              <div class="row"><div><strong>Версия</strong><span>0.1.0 web</span></div><span>beta</span></div>
+              <div class="row"><div><strong>Сервер</strong><span>1 нода на старте</span></div><span>soon</span></div>
+              <div class="row"><div><strong>Доступ</strong><span>По конфигу и QR-коду</span></div><span>WG</span></div>
+            </div>
+          `
+        }
+      };
+
+      const item = templates[type] || templates.about;
+      title.textContent = item.title;
+      content.innerHTML = item.html;
+      sheet.classList.add('open');
+    }
+
+    function closeSheet(event) {
+      if (event && event.target.id !== 'sheet') return;
+      document.getElementById('sheet').classList.remove('open');
+    }
+
+    render();
+  </script>
 </body>
 </html>
