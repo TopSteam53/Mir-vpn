@@ -23,10 +23,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+BRAND_NAME = "SLAVIK VPN"
+CONFIG_FILENAME = "slavik.conf"
+
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
 PAYMENT_PROVIDER_TOKEN = os.getenv("PAYMENT_PROVIDER_TOKEN", "")
 CURRENCY = os.getenv("CURRENCY", "RUB")
-DB_PATH = Path(os.getenv("DB_PATH", "data/korda.db"))
+DB_PATH = Path(os.getenv("DB_PATH", "data/slavik.db"))
 CONFIGS_DIR = Path(os.getenv("CONFIGS_DIR", "configs"))
 SUPPORT_USERNAME = os.getenv("SUPPORT_USERNAME", "")
 BOT_USERNAME = os.getenv("BOT_USERNAME", "")
@@ -38,19 +41,19 @@ ADMIN_IDS = {
 
 PLANS = {
     "early_30": {
-        "title": "Korda VPN — ранний доступ",
+        "title": "SLAVIK VPN — ранний доступ",
         "description": "30 дней доступа. Первые 3 месяца по 149 ₽, затем 199 ₽.",
         "price_kop": 14900,
         "days": 30,
     },
     "standard_30": {
-        "title": "Korda VPN — 1 месяц",
+        "title": "SLAVIK VPN — 1 месяц",
         "description": "30 дней доступа к VPN.",
         "price_kop": 19900,
         "days": 30,
     },
     "standard_90": {
-        "title": "Korda VPN — 3 месяца",
+        "title": "SLAVIK VPN — 3 месяца",
         "description": "90 дней доступа к VPN.",
         "price_kop": 49900,
         "days": 90,
@@ -79,6 +82,10 @@ def is_active_until(value: str | None) -> bool:
         return datetime.fromisoformat(value) > utc_now()
     except ValueError:
         return False
+
+
+def is_admin(user_id: int | None) -> bool:
+    return bool(user_id and user_id in ADMIN_IDS)
 
 
 async def init_db() -> None:
@@ -121,6 +128,7 @@ async def upsert_user(message: Message) -> None:
     user = message.from_user
     if not user:
         return
+
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute(
             """
@@ -131,6 +139,18 @@ async def upsert_user(message: Message) -> None:
                 first_name=excluded.first_name
             """,
             (user.id, user.username, user.first_name, utc_now().isoformat()),
+        )
+        await db.commit()
+
+
+async def ensure_user(telegram_id: int) -> None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            """
+            INSERT OR IGNORE INTO users (telegram_id, username, first_name, created_at)
+            VALUES (?, ?, ?, ?)
+            """,
+            (telegram_id, None, None, utc_now().isoformat()),
         )
         await db.commit()
 
@@ -146,9 +166,27 @@ async def get_user(telegram_id: int) -> dict | None:
         return dict(row) if row else None
 
 
+async def get_recent_users(limit: int = 20) -> list[dict]:
+    async with aiosqlite.connect(DB_PATH) as db:
+        db.row_factory = aiosqlite.Row
+        async with db.execute(
+            """
+            SELECT telegram_id, username, first_name, subscription_until, plan_code, created_at
+            FROM users
+            ORDER BY created_at DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ) as cursor:
+            rows = await cursor.fetchall()
+        return [dict(row) for row in rows]
+
+
 async def activate_subscription(telegram_id: int, plan_code: str) -> str:
     plan = PLANS[plan_code]
+    await ensure_user(telegram_id)
     user = await get_user(telegram_id)
+
     current_until = None
     if user and user.get("subscription_until"):
         try:
@@ -169,17 +207,60 @@ async def activate_subscription(telegram_id: int, plan_code: str) -> str:
             (new_until.isoformat(), plan_code, telegram_id),
         )
         await db.commit()
+
     return new_until.isoformat()
+
+
+async def activate_custom_days(telegram_id: int, days: int, plan_code: str = "manual") -> str:
+    await ensure_user(telegram_id)
+    user = await get_user(telegram_id)
+
+    current_until = None
+    if user and user.get("subscription_until"):
+        try:
+            current_until = datetime.fromisoformat(user["subscription_until"])
+        except ValueError:
+            current_until = None
+
+    start = current_until if current_until and current_until > utc_now() else utc_now()
+    new_until = start + timedelta(days=days)
+
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            """
+            UPDATE users
+            SET subscription_until = ?, plan_code = ?
+            WHERE telegram_id = ?
+            """,
+            (new_until.isoformat(), plan_code, telegram_id),
+        )
+        await db.commit()
+
+    return new_until.isoformat()
+
+
+async def deactivate_user(telegram_id: int) -> None:
+    await ensure_user(telegram_id)
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            """
+            UPDATE users
+            SET subscription_until = NULL, plan_code = NULL
+            WHERE telegram_id = ?
+            """,
+            (telegram_id,),
+        )
+        await db.commit()
 
 
 def main_menu() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="🔐 Получить конфиг", callback_data="get_config")],
+            [InlineKeyboardButton(text="🔐 Получить VPN", callback_data="get_config")],
             [InlineKeyboardButton(text="💳 Купить доступ", callback_data="plans")],
             [InlineKeyboardButton(text="👤 Моя подписка", callback_data="profile")],
             [InlineKeyboardButton(text="📲 Инструкция", callback_data="instructions")],
-            [InlineKeyboardButton(text="💬 Поддержка", callback_data="support")],
+            [InlineKeyboardButton(text="🧑‍🔧 Помощь Славика", callback_data="support")],
         ]
     )
 
@@ -201,7 +282,7 @@ def config_actions() -> InlineKeyboardMarkup:
         [InlineKeyboardButton(text="🤖 Инструкция Android", callback_data="android_guide")],
     ]
     if SUPPORT_USERNAME:
-        rows.append([InlineKeyboardButton(text="💬 Поддержка", url=f"https://t.me/{SUPPORT_USERNAME}")])
+        rows.append([InlineKeyboardButton(text="🧑‍🔧 Написать Славику", url=f"https://t.me/{SUPPORT_USERNAME}")])
     rows.append([InlineKeyboardButton(text="← Главное меню", callback_data="home")])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
@@ -209,8 +290,8 @@ def config_actions() -> InlineKeyboardMarkup:
 async def send_home(message: Message) -> None:
     await upsert_user(message)
     text = (
-        "<b>Korda VPN</b>\n\n"
-        "Доступ к VPN через личный конфиг.\n"
+        "<b>SLAVIK VPN</b> 😎\n\n"
+        "Славик подключит VPN через личный конфиг.\n"
         "Оплата, подписка и инструкция — прямо в этом боте."
     )
     await message.answer(text, reply_markup=main_menu())
@@ -235,15 +316,15 @@ async def send_instructions(chat_id: int, bot: Bot) -> None:
         "<b>Как подключиться</b>\n\n"
         "<b>iPhone</b>\n"
         "1. Установи WireGuard или AmneziaVPN.\n"
-        "2. Нажми «Получить конфиг» в боте.\n"
-        "3. Отсканируй QR-код или импортируй .conf.\n"
+        "2. Нажми «Получить VPN» в боте.\n"
+        "3. Отсканируй QR-код или импортируй файл.\n"
         "4. Разреши добавить VPN и включи тумблер.\n\n"
         "<b>Android</b>\n"
         "1. Установи WireGuard или AmneziaVPN.\n"
-        "2. Скачай .conf из бота.\n"
+        "2. Скачай файл из бота.\n"
         "3. Импортируй конфиг.\n"
         "4. Включи VPN.\n\n"
-        "QR и конфиг нужны один раз. Потом VPN включается в приложении."
+        "QR и файл нужны один раз. Потом VPN включается обычным тумблером."
     )
     await bot.send_message(chat_id, text, reply_markup=main_menu())
 
@@ -252,7 +333,7 @@ async def send_support(chat_id: int, bot: Bot) -> None:
     if SUPPORT_USERNAME:
         await bot.send_message(
             chat_id,
-            "Поддержка Korda VPN:",
+            "Славик на связи 🧑‍🔧",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[[InlineKeyboardButton(text="Написать в поддержку", url=f"https://t.me/{SUPPORT_USERNAME}")]]
             ),
@@ -276,20 +357,20 @@ async def send_user_config(chat_id: int, bot: Bot, telegram_id: int) -> None:
         await bot.send_message(
             chat_id,
             "Подписка активна, но личный конфиг ещё не создан.\n\n"
-            "Админ должен положить файл сюда на сервере:\n"
+            "Славику нужно положить файл на сервере сюда:\n"
             f"<code>{conf_path}</code>",
             reply_markup=config_actions(),
         )
         return
 
     conf_text = conf_path.read_text(encoding="utf-8")
-    qr_path = Path("/tmp") / f"korda_{telegram_id}.png"
+    qr_path = Path("/tmp") / f"slavik_{telegram_id}.png"
     qrcode.make(conf_text).save(qr_path)
 
     await bot.send_document(
         chat_id,
-        FSInputFile(conf_path, filename="korda.conf"),
-        caption="Файл конфигурации Korda VPN",
+        FSInputFile(conf_path, filename=CONFIG_FILENAME),
+        caption="Файл конфигурации SLAVIK VPN",
     )
     await bot.send_photo(
         chat_id,
@@ -307,7 +388,7 @@ async def send_invoice(callback: CallbackQuery, plan_code: str) -> None:
         return
 
     plan = PLANS[plan_code]
-    payload = f"korda:{callback.from_user.id}:{plan_code}:{uuid.uuid4().hex}"
+    payload = f"slavik:{callback.from_user.id}:{plan_code}:{uuid.uuid4().hex}"
     prices = [LabeledPrice(label=plan["title"], amount=plan["price_kop"])]
 
     await callback.message.answer_invoice(
@@ -317,7 +398,7 @@ async def send_invoice(callback: CallbackQuery, plan_code: str) -> None:
         provider_token=PAYMENT_PROVIDER_TOKEN,
         currency=CURRENCY,
         prices=prices,
-        start_parameter=f"korda-{plan_code}",
+        start_parameter=f"slavik-{plan_code}",
     )
 
 
@@ -353,6 +434,54 @@ async def main() -> None:
     async def on_id(message: Message) -> None:
         if message.from_user:
             await message.answer(f"Твой Telegram ID: <code>{message.from_user.id}</code>")
+
+    @dp.message(Command("activate"))
+    async def on_activate(message: Message) -> None:
+        if not is_admin(message.from_user.id if message.from_user else None):
+            return
+
+        parts = (message.text or "").split()
+        if len(parts) < 3 or not parts[1].isdigit() or not parts[2].isdigit():
+            await message.answer("Формат: <code>/activate telegram_id days</code>")
+            return
+
+        telegram_id = int(parts[1])
+        days = int(parts[2])
+        until = await activate_custom_days(telegram_id, days)
+        await message.answer(f"Готово ✅\nUser ID: <code>{telegram_id}</code>\nДо: <b>{fmt_date(until)}</b>")
+
+    @dp.message(Command("deactivate"))
+    async def on_deactivate(message: Message) -> None:
+        if not is_admin(message.from_user.id if message.from_user else None):
+            return
+
+        parts = (message.text or "").split()
+        if len(parts) < 2 or not parts[1].isdigit():
+            await message.answer("Формат: <code>/deactivate telegram_id</code>")
+            return
+
+        telegram_id = int(parts[1])
+        await deactivate_user(telegram_id)
+        await message.answer(f"Подписка отключена ✅\nUser ID: <code>{telegram_id}</code>")
+
+    @dp.message(Command("users"))
+    async def on_users(message: Message) -> None:
+        if not is_admin(message.from_user.id if message.from_user else None):
+            return
+
+        users = await get_recent_users(20)
+        if not users:
+            await message.answer("Пользователей пока нет.")
+            return
+
+        lines = ["<b>Последние пользователи</b>\n"]
+        for user in users:
+            username = f"@{user['username']}" if user.get("username") else "без username"
+            active = "✅" if is_active_until(user.get("subscription_until")) else "❌"
+            lines.append(
+                f"{active} <code>{user['telegram_id']}</code> — {username} — до {fmt_date(user.get('subscription_until'))}"
+            )
+        await message.answer("\n".join(lines))
 
     @dp.callback_query(F.data == "home")
     async def on_home(callback: CallbackQuery) -> None:
@@ -401,7 +530,7 @@ async def main() -> None:
             await callback.message.answer(
                 "<b>iPhone</b>\n\n"
                 "Установи WireGuard или AmneziaVPN → нажми «+» → «Создать из QR-кода» "
-                "или импортируй файл <code>korda.conf</code>. После этого конфиг сохранится, "
+                f"или импортируй файл <code>{CONFIG_FILENAME}</code>. После этого конфиг сохранится, "
                 "и сканировать QR каждый раз не нужно.",
                 reply_markup=main_menu(),
             )
@@ -412,7 +541,7 @@ async def main() -> None:
         if callback.message:
             await callback.message.answer(
                 "<b>Android</b>\n\n"
-                "Установи WireGuard или AmneziaVPN → импортируй файл <code>korda.conf</code> "
+                f"Установи WireGuard или AmneziaVPN → импортируй файл <code>{CONFIG_FILENAME}</code> "
                 "или отсканируй QR. Потом VPN включается обычным тумблером в приложении.",
                 reply_markup=main_menu(),
             )
@@ -427,7 +556,7 @@ async def main() -> None:
     async def on_pre_checkout(pre_checkout_query: PreCheckoutQuery) -> None:
         payload = pre_checkout_query.invoice_payload
         parts = payload.split(":")
-        if len(parts) < 4 or parts[0] != "korda" or parts[2] not in PLANS:
+        if len(parts) < 4 or parts[0] != "slavik" or parts[2] not in PLANS:
             await pre_checkout_query.answer(ok=False, error_message="Некорректный платеж.")
             return
         await pre_checkout_query.answer(ok=True)
@@ -436,6 +565,7 @@ async def main() -> None:
     async def on_successful_payment(message: Message) -> None:
         if not message.from_user or not message.successful_payment:
             return
+
         payment = message.successful_payment
         parts = payment.invoice_payload.split(":")
         plan_code = parts[2]
@@ -467,14 +597,16 @@ async def main() -> None:
             "Оплата прошла ✅\n\n"
             f"Тариф: <b>{plan['title']}</b>\n"
             f"Подписка до: <b>{fmt_date(until)}</b>\n\n"
-            "Теперь можно получить конфиг.",
+            "Теперь можно получить VPN.",
             reply_markup=main_menu(),
         )
+
+        username = f"@{message.from_user.username}" if message.from_user.username else "без username"
         await notify_admins(
             bot,
-            "Новая оплата Korda VPN ✅\n"
+            "Новая оплата SLAVIK VPN ✅\n"
             f"User ID: {message.from_user.id}\n"
-            f"Username: @{message.from_user.username}\n"
+            f"Username: {username}\n"
             f"Тариф: {plan_code}\n"
             f"Сумма: {payment.total_amount / 100:.2f} {payment.currency}\n"
             f"Создай конфиг: {CONFIGS_DIR}/{message.from_user.id}.conf",
