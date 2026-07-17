@@ -1,6 +1,8 @@
-# Korda VPN Bot
+# SLAVIK VPN Bot
 
-Telegram-бот для продажи доступа к VPN через YooKassa/Telegram Payments и выдачи личных WireGuard/AmneziaWG конфигов.
+Telegram-бот для продажи доступа к VPN через YooKassa / Telegram Payments и выдачи личных WireGuard / AmneziaWG конфигов.
+
+Сайт не используется. Основной продукт — Telegram-бот.
 
 ## Что уже есть
 
@@ -9,6 +11,7 @@ Telegram-бот для продажи доступа к VPN через YooKassa/
 - оплата через Telegram Payments с YooKassa provider token;
 - SQLite-база пользователей и оплат;
 - продление подписки после успешной оплаты;
+- ручная активация подписки админом;
 - выдача `.conf` файла;
 - генерация QR-кода из конфига;
 - инструкции для iPhone и Android;
@@ -44,8 +47,47 @@ BOT_TOKEN=токен от BotFather
 PAYMENT_PROVIDER_TOKEN=платежный токен YooKassa из BotFather -> Payments
 ADMIN_IDS=твой Telegram ID
 SUPPORT_USERNAME=юзернейм поддержки без @
-BOT_USERNAME=юзернейм бота без @
+BOT_USERNAME=slavik_vpn_bot
+DB_PATH=data/slavik.db
+CONFIGS_DIR=configs
+CURRENCY=RUB
 ```
+
+## Команды пользователя
+
+```text
+/start   главное меню
+/menu    главное меню
+/id      узнать свой Telegram ID
+```
+
+## Админ-команды
+
+Работают только для ID из `ADMIN_IDS`.
+
+```text
+/users
+```
+
+Показать последних пользователей.
+
+```text
+/activate telegram_id days
+```
+
+Активировать или продлить подписку вручную.
+
+Пример:
+
+```text
+/activate 123456789 30
+```
+
+```text
+/deactivate telegram_id
+```
+
+Отключить подписку вручную.
 
 ## Как работает выдача конфига
 
@@ -66,15 +108,14 @@ configs/123456789.conf
 После этого пользователь нажимает в боте:
 
 ```text
-Получить конфиг
+Получить VPN
 ```
 
 и бот отправляет ему:
 
-- файл `korda.conf`;
+- файл `slavik.conf`;
 - QR-код для WireGuard / AmneziaVPN.
 
 ## Важно
 
 Не добавляй `.env`, реальные токены и личные конфиги в публичный GitHub.
-
