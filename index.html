@@ -3,18 +3,376 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MIR VPN — быстрый VPN с личной поддержкой</title>
-  <meta name="description" content="MIR VPN — аккуратный VPN-сервис для первых пользователей: один быстрый сервер, простое подключение через Telegram, QR-код и личная помощь." />
+  <title>Korda VPN — стабильный VPN для своих</title>
+  <meta name="description" content="Korda VPN — стабильный VPN с ранним доступом, Telegram-поддержкой и понятным подключением через QR-код." />
   <style>
-    :root{--bg:#080a0f;--bg2:#0d111a;--card:#111722;--card2:#0c111b;--line:rgba(255,255,255,.1);--text:#f7f8fb;--muted:#9aa4b2;--soft:#c8d0dc;--accent:#59f1c8;--accent2:#8aa4ff;--warning:#f8c56b;--radius:28px;--shadow:0 30px 90px rgba(0,0,0,.45)}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at 10% -10%,rgba(89,241,200,.16),transparent 30%),radial-gradient(circle at 90% 0%,rgba(138,164,255,.18),transparent 28%),linear-gradient(180deg,#080a0f 0%,#0a0d14 42%,#07090d 100%);color:var(--text);line-height:1.55;min-height:100vh;overflow-x:hidden}body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:54px 54px;mask-image:linear-gradient(to bottom,black,transparent 70%)}a{color:inherit;text-decoration:none}.container{width:min(1160px,calc(100% - 32px));margin:0 auto}.nav{position:sticky;top:0;z-index:20;background:rgba(8,10,15,.76);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.07)}.nav-inner{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.04em}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#06100e;box-shadow:0 16px 44px rgba(89,241,200,.18)}.brand small{display:block;color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.02em;margin-top:-3px}.links{display:flex;gap:24px;color:var(--muted);font-size:14px}.links a:hover{color:var(--text)}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.055);font-weight:800;color:var(--text);transition:.2s;white-space:nowrap}.btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.09)}.btn-primary{border:0;color:#06100e;background:linear-gradient(135deg,var(--accent),#d7fff3);box-shadow:0 18px 50px rgba(89,241,200,.2)}.hero{padding:92px 0 56px}.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}.eyebrow{display:inline-flex;align-items:center;gap:10px;padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.055);color:var(--soft);font-size:14px;margin-bottom:22px}.pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 6px rgba(89,241,200,.12)}h1{font-size:clamp(43px,7vw,82px);line-height:.92;letter-spacing:-.075em;margin-bottom:24px;max-width:760px}.hero h1 span{background:linear-gradient(135deg,#fff 0%,#e9fff8 40%,#8df2d3 100%);-webkit-background-clip:text;background-clip:text;color:transparent}.lead{font-size:clamp(17px,2vw,21px);color:var(--soft);max-width:660px;margin-bottom:30px}.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:26px}.proof{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:640px}.proof-item{padding:14px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:18px}.proof-item strong{display:block;font-size:18px}.proof-item span{display:block;color:var(--muted);font-size:13px;margin-top:2px}.showcase{position:relative}.showcase:before{content:"";position:absolute;inset:30px -20px -20px 30px;background:linear-gradient(135deg,rgba(89,241,200,.18),rgba(138,164,255,.16));filter:blur(40px);z-index:-1}.dash{border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.035));border-radius:34px;padding:22px;box-shadow:var(--shadow)}.dash-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.status{display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-size:13px;font-weight:900;background:rgba(89,241,200,.09);border:1px solid rgba(89,241,200,.18);border-radius:999px;padding:7px 10px}.server-card{border:1px solid rgba(255,255,255,.1);border-radius:26px;background:#0b111a;padding:20px;margin-bottom:14px}.server-card h3{font-size:28px;letter-spacing:-.04em;margin:10px 0 4px}.server-card p{color:var(--muted)}.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.metric{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);border-radius:18px;padding:14px}.metric span{display:block;color:var(--muted);font-size:12px}.metric strong{font-size:20px}.bars{display:grid;gap:8px;margin-top:16px}.bar{height:10px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent2))}.note{border:1px solid rgba(248,197,107,.2);background:rgba(248,197,107,.08);color:#ffe2a9;border-radius:20px;padding:15px;font-size:14px}section{padding:66px 0}.section-head{max-width:760px;margin-bottom:28px}.kicker{color:var(--accent);font-size:12px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px}h2{font-size:clamp(32px,4.4vw,54px);line-height:1;letter-spacing:-.06em;margin-bottom:14px}.section-head p{font-size:18px;color:var(--muted)}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{position:relative;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.035));border-radius:var(--radius);padding:22px;min-height:190px;overflow:hidden}.card:after{content:"";position:absolute;inset:auto -40px -55px auto;width:110px;height:110px;border-radius:50%;background:rgba(89,241,200,.08);filter:blur(16px)}.icon{width:46px;height:46px;border-radius:16px;display:grid;place-items:center;background:rgba(89,241,200,.1);border:1px solid rgba(89,241,200,.16);font-size:22px;margin-bottom:16px}.card h3{font-size:20px;letter-spacing:-.03em;margin-bottom:8px}.card p{color:var(--muted);font-size:15px}.split{display:grid;grid-template-columns:.85fr 1.15fr;gap:22px;align-items:start}.panel{border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:30px;padding:24px}.list{display:grid;gap:12px}.list-row{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);border-radius:18px}.num{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#07100f;font-weight:900;flex:0 0 auto}.pricing{display:grid;grid-template-columns:1.1fr .95fr .95fr;gap:16px}.price-card{border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:30px;padding:24px}.price-card.featured{background:linear-gradient(180deg,rgba(89,241,200,.14),rgba(255,255,255,.045));border-color:rgba(89,241,200,.35);box-shadow:0 26px 90px rgba(89,241,200,.08)}.tag{display:inline-flex;padding:7px 11px;border-radius:999px;background:rgba(89,241,200,.1);border:1px solid rgba(89,241,200,.18);color:#a8ffe8;font-weight:900;font-size:12px;margin-bottom:18px}.price{font-size:46px;line-height:1;font-weight:950;letter-spacing:-.07em;margin:14px 0 8px}.price small{font-size:15px;color:var(--muted);letter-spacing:0}.price-card p{color:var(--muted)}.features{list-style:none;display:grid;gap:10px;margin:22px 0}.features li{color:#dce4ef}.features li:before{content:"✓";color:var(--accent);font-weight:900;margin-right:9px}.quote{border-left:3px solid var(--accent);padding-left:18px;color:var(--soft);font-size:20px}.faq{display:grid;gap:12px}details{border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:22px;padding:18px 20px}summary{cursor:pointer;font-weight:900}details p{color:var(--muted);margin-top:10px}.cta{border:1px solid rgba(89,241,200,.2);background:radial-gradient(circle at 25% 15%,rgba(89,241,200,.18),transparent 35%),radial-gradient(circle at 75% 20%,rgba(138,164,255,.18),transparent 32%),rgba(255,255,255,.045);border-radius:36px;padding:44px;text-align:center;box-shadow:var(--shadow)}.cta p{color:var(--muted);font-size:18px;max-width:680px;margin:0 auto 24px}footer{border-top:1px solid rgba(255,255,255,.08);padding:34px 0 50px;color:var(--muted);font-size:14px}.footer-inner{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}.footer-links{display:flex;gap:16px;flex-wrap:wrap}@media(max-width:940px){.links{display:none}.hero-grid,.split,.pricing,.grid-3,.grid-4{grid-template-columns:1fr}.hero{padding-top:58px}.proof{grid-template-columns:1fr 1fr}.dash{padding:16px}.server-card h3{font-size:24px}}@media(max-width:560px){.container{width:min(100% - 22px,1160px)}.nav-inner{height:68px}.nav .btn{min-height:42px;padding:0 14px;font-size:13px}.hero-actions{flex-direction:column}.btn{width:100%}.proof{grid-template-columns:1fr}.metric-grid{grid-template-columns:1fr}section{padding:48px 0}.cta{padding:30px 18px}.footer-inner{display:grid}.brand small{display:none}}
+    :root {
+      --bg: #050609;
+      --surface: #0b0d12;
+      --surface-2: #11141c;
+      --line: rgba(255,255,255,.10);
+      --text: #f5f7fb;
+      --muted: #a0a7b5;
+      --muted-2: #737b8c;
+      --accent: #5eead4;
+      --accent-2: #8b5cf6;
+      --good: #22c55e;
+      --warning: #f59e0b;
+      --radius-xl: 32px;
+      --radius-lg: 22px;
+      --shadow: 0 30px 120px rgba(0,0,0,.48);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 12% -8%, rgba(94,234,212,.16), transparent 34%),
+        radial-gradient(circle at 88% 6%, rgba(139,92,246,.20), transparent 32%),
+        linear-gradient(180deg, #050609 0%, #070911 45%, #050609 100%);
+      color: var(--text);
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1140px, calc(100% - 36px)); margin: 0 auto; }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .26;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 58px 58px;
+      mask-image: linear-gradient(to bottom, black, transparent 80%);
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(5,6,9,.74);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .nav-inner {
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 850;
+      letter-spacing: -.04em;
+      font-size: 20px;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background:
+        linear-gradient(135deg, rgba(94,234,212,.95), rgba(139,92,246,.95));
+      color: #04100f;
+      font-weight: 950;
+      box-shadow: 0 18px 60px rgba(94,234,212,.16);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a { transition: .18s ease; }
+    .nav-links a:hover { color: var(--text); }
+
+    .btn {
+      min-height: 48px;
+      padding: 0 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.13);
+      background: rgba(255,255,255,.055);
+      color: var(--text);
+      font-weight: 760;
+      white-space: nowrap;
+      transition: .18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); border-color: rgba(255,255,255,.24); background: rgba(255,255,255,.085); }
+    .btn-primary { border: 0; color: #03100e; background: linear-gradient(135deg, var(--accent), #c8fff5); box-shadow: 0 18px 55px rgba(94,234,212,.20); }
+    .btn-primary:hover { filter: brightness(1.05); }
+
+    .hero { padding: 92px 0 64px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 13px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      background: rgba(255,255,255,.045);
+      color: #d7dde8;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .pulse {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(94,234,212,.12);
+    }
+
+    h1 {
+      max-width: 760px;
+      font-size: clamp(46px, 7vw, 82px);
+      line-height: .92;
+      letter-spacing: -.075em;
+      margin-bottom: 24px;
+    }
+
+    .grad {
+      background: linear-gradient(135deg, #fff 0%, #e9fff9 45%, #8ff5e6 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      max-width: 650px;
+      color: var(--muted);
+      font-size: clamp(17px, 2vw, 21px);
+      margin-bottom: 30px;
+    }
+
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+
+    .proof-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+      max-width: 680px;
+    }
+
+    .proof {
+      padding: 14px 15px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.09);
+      background: rgba(255,255,255,.045);
+    }
+
+    .proof strong { display: block; font-size: 18px; letter-spacing: -.03em; }
+    .proof span { color: var(--muted); font-size: 13px; }
+
+    .server-card {
+      position: relative;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 34px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.035)),
+        rgba(255,255,255,.035);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .server-card::before {
+      content: "";
+      position: absolute;
+      inset: -110px -110px auto auto;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: rgba(94,234,212,.18);
+      filter: blur(10px);
+    }
+
+    .server-shell {
+      position: relative;
+      border: 1px solid rgba(255,255,255,.10);
+      background: #090b10;
+      border-radius: 26px;
+      padding: 22px;
+    }
+
+    .server-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .label { color: var(--muted-2); font-size: 13px; text-transform: uppercase; letter-spacing: .12em; font-weight: 850; }
+    .server-title { font-size: 28px; letter-spacing: -.045em; margin-top: 5px; }
+    .status-pill { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 8px 11px; color: #adfff0; background: rgba(94,234,212,.10); border: 1px solid rgba(94,234,212,.22); font-size: 13px; font-weight: 800; }
+
+    .route {
+      display: grid;
+      grid-template-columns: 1fr 44px 1fr;
+      align-items: center;
+      gap: 12px;
+      margin: 26px 0;
+    }
+
+    .route-box {
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 20px;
+      background: rgba(255,255,255,.045);
+      padding: 16px;
+    }
+
+    .route-box b { display: block; font-size: 18px; }
+    .route-box small { color: var(--muted); }
+    .arrow { text-align: center; color: var(--accent); font-size: 24px; }
+
+    .metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .metric { border: 1px solid rgba(255,255,255,.09); background: rgba(255,255,255,.04); border-radius: 18px; padding: 15px; }
+    .metric b { display: block; font-size: 21px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+
+    section { padding: 68px 0; }
+    .section-head { max-width: 760px; margin-bottom: 30px; }
+    .kicker { color: var(--accent); font-size: 13px; text-transform: uppercase; letter-spacing: .14em; font-weight: 900; margin-bottom: 10px; }
+    h2 { font-size: clamp(32px, 4vw, 52px); line-height: 1.02; letter-spacing: -.062em; margin-bottom: 14px; }
+    .section-head p { color: var(--muted); font-size: 18px; }
+
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+    .card {
+      min-height: 198px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 24px;
+      background: rgba(255,255,255,.045);
+      padding: 22px;
+    }
+
+    .icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: rgba(94,234,212,.10);
+      border: 1px solid rgba(94,234,212,.14);
+      margin-bottom: 16px;
+      font-size: 22px;
+    }
+
+    .card h3 { font-size: 20px; letter-spacing: -.03em; margin-bottom: 8px; }
+    .card p { color: var(--muted); font-size: 15px; }
+
+    .pricing { display: grid; grid-template-columns: 1.1fr .95fr .95fr; gap: 16px; align-items: stretch; }
+    .price-card { position: relative; border: 1px solid rgba(255,255,255,.11); border-radius: 28px; background: rgba(255,255,255,.045); padding: 24px; overflow: hidden; }
+    .price-card.featured { background: linear-gradient(180deg, rgba(94,234,212,.13), rgba(255,255,255,.045)); border-color: rgba(94,234,212,.30); box-shadow: 0 24px 90px rgba(94,234,212,.09); }
+    .tag { display: inline-flex; width: fit-content; border-radius: 999px; padding: 7px 11px; background: rgba(94,234,212,.11); color: #b8fff3; font-size: 13px; font-weight: 900; margin-bottom: 16px; }
+    .price-card h3 { font-size: 22px; letter-spacing: -.035em; }
+    .price { margin: 14px 0 6px; font-size: 44px; font-weight: 950; letter-spacing: -.07em; }
+    .price small { font-size: 15px; color: var(--muted); letter-spacing: 0; font-weight: 700; }
+    .sub { color: var(--muted); font-size: 15px; }
+    .features { list-style: none; display: grid; gap: 10px; margin: 22px 0; color: #dce3ef; font-size: 15px; }
+    .features li::before { content: "✓"; margin-right: 9px; color: var(--accent); font-weight: 950; }
+
+    .steps { display: grid; gap: 12px; }
+    .step { display: grid; grid-template-columns: 48px 1fr; gap: 15px; padding: 18px; border: 1px solid rgba(255,255,255,.10); border-radius: 22px; background: rgba(255,255,255,.04); }
+    .num { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 16px; background: linear-gradient(135deg, var(--accent), #d3fff7); color: #061210; font-weight: 950; }
+    .step h3 { letter-spacing: -.025em; margin-bottom: 3px; }
+    .step p { color: var(--muted); }
+
+    .faq { display: grid; gap: 12px; }
+    details { border: 1px solid rgba(255,255,255,.10); border-radius: 20px; background: rgba(255,255,255,.04); padding: 18px 20px; }
+    summary { cursor: pointer; font-weight: 850; }
+    details p { color: var(--muted); margin-top: 10px; }
+
+    .cta {
+      text-align: center;
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 34px;
+      padding: 46px 24px;
+      background:
+        radial-gradient(circle at 30% 10%, rgba(94,234,212,.15), transparent 32%),
+        radial-gradient(circle at 70% 5%, rgba(139,92,246,.18), transparent 30%),
+        rgba(255,255,255,.045);
+      box-shadow: var(--shadow);
+    }
+    .cta p { color: var(--muted); font-size: 18px; max-width: 660px; margin: 0 auto 24px; }
+
+    footer { padding: 36px 0 54px; border-top: 1px solid rgba(255,255,255,.07); color: var(--muted); font-size: 14px; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+    .footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
+
+    @media (max-width: 930px) {
+      .hero-grid, .grid-3, .grid-4, .pricing { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hero { padding-top: 58px; }
+      .proof-row { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 540px) {
+      .container { width: min(100% - 24px, 1140px); }
+      .nav-inner { height: 68px; }
+      .brand { font-size: 18px; }
+      .brand-mark { width: 36px; height: 36px; }
+      .nav .btn { min-height: 42px; padding: 0 14px; font-size: 13px; }
+      .hero-actions .btn, .price-card .btn, .cta .btn { width: 100%; }
+      .server-card { padding: 14px; border-radius: 26px; }
+      .server-shell { padding: 18px; border-radius: 22px; }
+      .route { grid-template-columns: 1fr; }
+      .arrow { transform: rotate(90deg); }
+      .metric-grid { grid-template-columns: 1fr; }
+      section { padding: 48px 0; }
+      .price { font-size: 38px; }
+    }
   </style>
 </head>
 <body>
+  <div class="noise"></div>
+
   <nav class="nav">
     <div class="container nav-inner">
-      <a class="brand" href="#"><span class="brand-mark">M</span><span>MIR VPN<small>закрытый доступ</small></span></a>
-      <div class="links"><a href="#why">Почему мы</a><a href="#server">Сервер</a><a href="#pricing">Тарифы</a><a href="#how">Подключение</a><a href="#faq">FAQ</a></div>
-      <a class="btn btn-primary" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Открыть Telegram</a>
+      <a class="brand" href="#" aria-label="Korda VPN">
+        <span class="brand-mark">K</span>
+        <span>Korda VPN</span>
+      </a>
+      <div class="nav-links">
+        <a href="#why">Почему мы</a>
+        <a href="#server">Сервер</a>
+        <a href="#pricing">Тарифы</a>
+        <a href="#how">Подключение</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <a class="btn btn-primary" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Открыть бота</a>
     </div>
   </nav>
 
@@ -22,91 +380,182 @@
     <header class="hero">
       <div class="container hero-grid">
         <div>
-          <div class="eyebrow"><span class="pulse"></span> первые 10 мест по 149 ₽/мес на 3 месяца</div>
-          <h1><span>VPN для своих</span>, без перегруза и лишней суеты</h1>
-          <p class="lead">MIR VPN — небольшой VPN-сервис с одним быстрым сервером на старте, подключением через Telegram и ручной помощью, если что-то не получилось настроить.</p>
-          <div class="hero-actions"><a class="btn btn-primary" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Занять ранний доступ</a><a class="btn" href="#pricing">Смотреть тарифы</a></div>
-          <div class="proof"><div class="proof-item"><strong>1 сервер</strong><span>на старте, без распыления</span></div><div class="proof-item"><strong>до 3 устройств</strong><span>телефон, ноутбук, ПК</span></div><div class="proof-item"><strong>поддержка</strong><span>поможем подключить</span></div></div>
-        </div>
-        <div class="showcase">
-          <div class="dash">
-            <div class="dash-top"><strong>Статус запуска</strong><span class="status"><span class="pulse"></span>подготовка</span></div>
-            <div class="server-card">
-              <div class="eyebrow" style="margin-bottom:12px">🇩🇪 первая локация</div>
-              <h3>Germany Node 01</h3>
-              <p>Один сервер для первых пользователей. Без выдуманных пингов и фейковой нагрузки до реального запуска.</p>
-              <div class="metric-grid"><div class="metric"><span>Протокол</span><strong>WG / AWG</strong></div><div class="metric"><span>Доступ</span><strong>QR-код</strong></div><div class="metric"><span>Лимит</span><strong>малый пул</strong></div><div class="metric"><span>Оплата</span><strong>вручную</strong></div></div>
-              <div class="bars"><div class="bar"><i style="width:72%"></i></div><div class="bar"><i style="width:48%"></i></div><div class="bar"><i style="width:86%"></i></div></div>
-            </div>
-            <div class="note">Сейчас сайт собирает ранний доступ. Реальные параметры сервера появятся после покупки VPS и теста подключения.</div>
+          <div class="eyebrow"><span class="pulse"></span> Закрытый ранний доступ для первых пользователей</div>
+          <h1><span class="grad">VPN для своих.</span><br>Без перегруза и лишнего шума.</h1>
+          <p class="lead">Korda VPN — небольшой сервис с понятным подключением через Telegram. Сначала запускаем одну быструю локацию, проверяем качество и не забиваем сервер сотнями людей.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Получить ранний доступ</a>
+            <a class="btn" href="#pricing">Смотреть тарифы</a>
+          </div>
+          <div class="proof-row">
+            <div class="proof"><strong>149 ₽</strong><span>для первых 10 человек на 3 месяца</span></div>
+            <div class="proof"><strong>до 3 устройств</strong><span>телефон, ноутбук, планшет</span></div>
+            <div class="proof"><strong>Telegram</strong><span>поддержка и выдача доступа</span></div>
           </div>
         </div>
+
+        <aside class="server-card" aria-label="Информация о сервере Korda VPN">
+          <div class="server-shell">
+            <div class="server-head">
+              <div>
+                <div class="label">первая локация</div>
+                <div class="server-title">Germany Node</div>
+              </div>
+              <div class="status-pill"><span class="pulse"></span> готовим запуск</div>
+            </div>
+
+            <div class="route">
+              <div class="route-box"><b>Ваше устройство</b><small>iPhone, Android, Windows, macOS</small></div>
+              <div class="arrow">→</div>
+              <div class="route-box"><b>Korda VPN</b><small>QR-код и конфиг в Telegram</small></div>
+            </div>
+
+            <div class="metric-grid">
+              <div class="metric"><b>1 сервер</b><span>на старте, без лишней витрины</span></div>
+              <div class="metric"><b>10 мест</b><span>первый закрытый набор</span></div>
+              <div class="metric"><b>WG/AWG</b><span>WireGuard или AmneziaWG</span></div>
+              <div class="metric"><b>ручной тест</b><span>перед масштабированием</span></div>
+            </div>
+          </div>
+        </aside>
       </div>
     </header>
 
     <section id="why">
       <div class="container">
-        <div class="section-head"><div class="kicker">позиционирование</div><h2>Не самый дешёвый. Зато без ощущения “сервер на тысячу человек”.</h2><p>Мы не пытаемся продавать VPN по 50–100 ₽. Ставка — на небольшой пул пользователей, понятное подключение и нормальную поддержку.</p></div>
+        <div class="section-head">
+          <div class="kicker">позиционирование</div>
+          <h2>Не самый дешёвый VPN. Нормальный VPN, который не стыдно дать другу.</h2>
+          <p>Мы не продаём легенду про 100 стран. Запускаем маленький сервис, где важнее стабильность, поддержка и аккуратное подключение.</p>
+        </div>
         <div class="grid-4">
-          <article class="card"><div class="icon">⚡</div><h3>Без перегруза</h3><p>На один сервер не загоняются сотни пользователей. Если появится нагрузка — добавляем новую ноду.</p></article>
-          <article class="card"><div class="icon">🔐</div><h3>Простая выдача</h3><p>Пользователь получает конфиг или QR-код через Telegram без сложного личного кабинета.</p></article>
-          <article class="card"><div class="icon">💬</div><h3>Живая помощь</h3><p>Если человек не разобрался с WireGuard или AmneziaVPN, помогаем вручную.</p></article>
-          <article class="card"><div class="icon">📦</div><h3>MVP без лишнего</h3><p>Сначала сайт, бот, один сервер и первые клиенты. Приложение делаем позже, когда будет спрос.</p></article>
+          <article class="card"><div class="icon">⚡</div><h3>Меньше людей на сервере</h3><p>Никакой идеи “посадить всех на одну ноду”. Если нагрузка растёт — добавляется новый сервер.</p></article>
+          <article class="card"><div class="icon">📲</div><h3>Подключение через QR</h3><p>Пользователь получает конфиг и инструкцию в Telegram, без сложного личного кабинета.</p></article>
+          <article class="card"><div class="icon">💬</div><h3>Живая помощь</h3><p>Если у человека не получилось настроить VPN, можно помочь вручную в сообщениях.</p></article>
+          <article class="card"><div class="icon">🧭</div><h3>Честный старт</h3><p>Сначала один сервер и тесты. Потом новые страны, бот, оплата и мобильное приложение.</p></article>
         </div>
       </div>
     </section>
 
     <section id="server">
-      <div class="container split">
-        <div class="section-head"><div class="kicker">сервер</div><h2>Начинаем с одной локации и доводим её до стабильности</h2><p>Для первых пользователей важнее стабильная Германия, чем список из 50 стран, которые никто не проверял.</p></div>
-        <div class="panel list">
-          <div class="list-row"><span class="num">1</span><div><h3>Германия</h3><p style="color:var(--muted)">Первая рабочая локация для теста скорости, стабильности и подключения.</p></div></div>
-          <div class="list-row"><span class="num">2</span><div><h3>Нидерланды</h3><p style="color:var(--muted)">Добавим после первых оплат и понятной нагрузки.</p></div></div>
-          <div class="list-row"><span class="num">3</span><div><h3>США</h3><p style="color:var(--muted)">Локация для расширения, когда появится стабильная база клиентов.</p></div></div>
+      <div class="container">
+        <div class="section-head">
+          <div class="kicker">серверы</div>
+          <h2>Начинаем с Германии. Остальные страны — после первых клиентов.</h2>
+          <p>Так мы не тратим деньги на пустую инфраструктуру и можем следить за качеством подключения.</p>
+        </div>
+        <div class="grid-3">
+          <article class="card"><div class="icon">🇩🇪</div><h3>Германия</h3><p>Первая локация для тестов и первых пользователей. Подходит для повседневного доступа.</p></article>
+          <article class="card"><div class="icon">🇳🇱</div><h3>Нидерланды</h3><p>Следующая локация после проверки спроса и нагрузки на первом сервере.</p></article>
+          <article class="card"><div class="icon">🇺🇸</div><h3>США</h3><p>Добавим позже, когда появится понятный запрос от пользователей.</p></article>
         </div>
       </div>
     </section>
 
     <section id="pricing">
       <div class="container">
-        <div class="section-head"><div class="kicker">цены</div><h2>Честная цена без вечных скидок</h2><p>Ранний доступ дешевле только на первые 3 месяца. Потом человек переходит на обычную цену.</p></div>
+        <div class="section-head">
+          <div class="kicker">тарифы</div>
+          <h2>Цена без демпинга: ранний доступ дешевле, основной тариф — 199 ₽.</h2>
+          <p>Первые места нужны для тестов и обратной связи. После 3 месяцев цена становится стандартной.</p>
+        </div>
         <div class="pricing">
-          <article class="price-card featured"><span class="tag">первые 10 пользователей</span><h3>Ранний доступ</h3><div class="price">149 ₽ <small>/ мес</small></div><p>Цена действует первые 3 месяца, дальше — 199 ₽/мес.</p><ul class="features"><li>до 3 устройств</li><li>QR-код и конфиг</li><li>помощь с подключением</li><li>первая локация Германия</li></ul><a class="btn btn-primary" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Занять место</a></article>
-          <article class="price-card"><span class="tag">основной</span><h3>1 месяц</h3><div class="price">199 ₽ <small>/ мес</small></div><p>Базовый тариф после запуска сервиса.</p><ul class="features"><li>до 3 устройств</li><li>безлимитный трафик</li><li>замена конфига</li><li>поддержка в Telegram</li></ul><a class="btn" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Выбрать</a></article>
-          <article class="price-card"><span class="tag">выгоднее</span><h3>3 месяца</h3><div class="price">499 ₽</div><p>Для тех, кто хочет оплатить сразу и не продлевать каждый месяц.</p><ul class="features"><li>примерно 166 ₽/мес</li><li>до 3 устройств</li><li>уведомление перед окончанием</li><li>личная помощь</li></ul><a class="btn" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Купить</a></article>
+          <article class="price-card featured">
+            <span class="tag">Первые 10 пользователей</span>
+            <h3>Ранний доступ</h3>
+            <div class="price">149 ₽ <small>/ месяц</small></div>
+            <p class="sub">Только первые 3 месяца. Потом — 199 ₽/мес.</p>
+            <ul class="features">
+              <li>до 3 устройств</li>
+              <li>первая локация Германия</li>
+              <li>QR-код и файл конфигурации</li>
+              <li>помощь с подключением в Telegram</li>
+            </ul>
+            <a class="btn btn-primary" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Занять место</a>
+          </article>
+
+          <article class="price-card">
+            <span class="tag">Стандарт</span>
+            <h3>1 месяц</h3>
+            <div class="price">199 ₽ <small>/ месяц</small></div>
+            <p class="sub">Базовая цена после запуска.</p>
+            <ul class="features">
+              <li>до 3 устройств</li>
+              <li>безлимитный трафик в разумных пределах</li>
+              <li>замена конфига при необходимости</li>
+              <li>уведомление перед окончанием</li>
+            </ul>
+            <a class="btn" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Выбрать</a>
+          </article>
+
+          <article class="price-card">
+            <span class="tag">Выгоднее</span>
+            <h3>3 месяца</h3>
+            <div class="price">499 ₽</div>
+            <p class="sub">Примерно 166 ₽ в месяц при оплате сразу.</p>
+            <ul class="features">
+              <li>до 3 устройств</li>
+              <li>не надо продлевать каждый месяц</li>
+              <li>поддержка в Telegram</li>
+              <li>доступ к новым локациям после запуска</li>
+            </ul>
+            <a class="btn" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Оплатить</a>
+          </article>
         </div>
       </div>
     </section>
 
     <section id="how">
-      <div class="container split">
-        <div class="section-head"><div class="kicker">как подключиться</div><h2>Без приложения на старте. Всё через Telegram.</h2><p>Пока клиентов мало, Telegram-бот заменяет приложение, личный кабинет и поддержку.</p><div class="quote">“Нажал кнопку → получил QR-код → добавил в приложение → подключился.”</div></div>
-        <div class="panel list">
-          <div class="list-row"><span class="num">1</span><div><h3>Открываете бота</h3><p style="color:var(--muted)">Бот показывает тарифы и принимает заявку.</p></div></div>
-          <div class="list-row"><span class="num">2</span><div><h3>Оплачиваете доступ</h3><p style="color:var(--muted)">На старте оплата может быть ручной. Автоматизацию добавим позже.</p></div></div>
-          <div class="list-row"><span class="num">3</span><div><h3>Получаете QR-код</h3><p style="color:var(--muted)">Подключение через WireGuard или AmneziaVPN.</p></div></div>
-          <div class="list-row"><span class="num">4</span><div><h3>Пользуетесь VPN</h3><p style="color:var(--muted)">Если что-то не вышло — пишете в поддержку.</p></div></div>
+      <div class="container">
+        <div class="section-head">
+          <div class="kicker">подключение</div>
+          <h2>Без приложения на старте. Всё через Telegram и готовый VPN-клиент.</h2>
+          <p>Собственное приложение сделаем позже, когда будут клиенты. Сейчас главное — рабочий доступ и нормальная поддержка.</p>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="num">1</div><div><h3>Открываете Telegram-бота</h3><p>Бот показывает тарифы, инструкции и статус подписки.</p></div></div>
+          <div class="step"><div class="num">2</div><div><h3>Получаете доступ</h3><p>На старте оплата может быть ручной. После запуска добавим автоматическую оплату.</p></div></div>
+          <div class="step"><div class="num">3</div><div><h3>Сканируете QR-код</h3><p>Добавляете конфиг в WireGuard или AmneziaVPN.</p></div></div>
+          <div class="step"><div class="num">4</div><div><h3>Пользуетесь VPN</h3><p>Если что-то не работает — пишете в поддержку, поможем настроить.</p></div></div>
         </div>
       </div>
     </section>
 
     <section id="faq">
       <div class="container">
-        <div class="section-head"><div class="kicker">вопросы</div><h2>Коротко и по делу</h2></div>
+        <div class="section-head">
+          <div class="kicker">FAQ</div>
+          <h2>Коротко и честно</h2>
+        </div>
         <div class="faq">
-          <details><summary>Почему сайт без мобильного приложения?</summary><p>Сначала проверяем спрос. Для первых клиентов достаточно Telegram-бота и готовых приложений WireGuard или AmneziaVPN. Собственное приложение есть смысл делать после первых стабильных оплат.</p></details>
-          <details><summary>Почему не 100 ₽ в месяц?</summary><p>VPN за 100 ₽ часто конкурирует только ценой. Мы хотим продавать не демпинг, а небольшой сервис с нормальной поддержкой и контролем нагрузки.</p></details>
-          <details><summary>Когда появится реальный сервер?</summary><p>После финальной подготовки сайта и Telegram-бота можно купить первый VPS, поднять VPN и выдать доступ первому другу или тестовым пользователям.</p></details>
-          <details><summary>Это гарантирует полную анонимность?</summary><p>Нет. Сайт не должен обещать то, что не подтверждено архитектурой и политикой логирования. Правильнее обещать приватное и защищённое подключение, а не абсолютную анонимность.</p></details>
+          <details><summary>Почему Korda VPN стоит не 100 ₽?</summary><p>Потому что мы не хотим строить сервис только на демпинге. Цена 199 ₽ позволяет держать меньше людей на сервере и нормально помогать с подключением.</p></details>
+          <details><summary>Будет ли мобильное приложение?</summary><p>Да, но позже. На первом этапе подключение идёт через WireGuard или AmneziaVPN, а управление доступом — через Telegram.</p></details>
+          <details><summary>Сколько устройств можно подключить?</summary><p>В базовом тарифе — до 3 устройств. Для семьи или большего количества устройств можно сделать отдельный тариф позже.</p></details>
+          <details><summary>Когда будут другие страны?</summary><p>После проверки первой локации и появления стабильных пользователей. Сначала Германия, затем Нидерланды и США.</p></details>
         </div>
       </div>
     </section>
 
     <section>
-      <div class="container"><div class="cta"><h2>Забронируй место в раннем доступе</h2><p>Первые 10 пользователей получают цену 149 ₽/мес на первые 3 месяца. После этого тариф станет 199 ₽/мес.</p><a class="btn btn-primary" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Перейти в Telegram</a></div></div>
+      <div class="container">
+        <div class="cta">
+          <h2>Забронировать место в первом наборе</h2>
+          <p>Первые 10 пользователей получают Korda VPN за 149 ₽/мес на первые 3 месяца. Потом стандартная цена — 199 ₽/мес.</p>
+          <a class="btn btn-primary" href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Открыть Telegram-бота</a>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer><div class="container footer-inner"><div>© 2026 MIR VPN. MVP-лендинг для раннего доступа.</div><div class="footer-links"><a href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Telegram</a><a href="#pricing">Тарифы</a><a href="#faq">FAQ</a></div></div></footer>
+  <footer>
+    <div class="container footer-inner">
+      <div>© 2026 Korda VPN. Стартовая версия сайта.</div>
+      <div class="footer-links">
+        <a href="https://t.me/YOUR_BOT_USERNAME" target="_blank" rel="noopener">Telegram</a>
+        <a href="#pricing">Тарифы</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
