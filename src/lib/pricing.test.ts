@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allocateReceipt, computeTotals, priceLine, type PricedLine } from "@/lib/pricing";
+import { allocateReceipt, computeTotals, lineKey, priceLine, type PricedLine } from "@/lib/pricing";
 
 const line = (sum: number, qty = 1): PricedLine => ({ title: "x", unitPrice: sum / qty, qty, sum });
 
@@ -71,5 +71,26 @@ describe("allocateReceipt", () => {
 
   it("returns lines unchanged without a discount", () => {
     expect(allocateReceipt([line(2780, 2)], 0)).toEqual([{ title: "x", qty: 2, unitKopecks: 139000 }]);
+  });
+});
+
+describe("wick choice", () => {
+  it("adds the wooden wick surcharge and names it", () => {
+    expect(priceLine({ slug: "cedra", variant: "200", wick: "wood", qty: 2 })).toMatchObject({
+      title: "№ 102 Цедра, 200 мл, деревянный фитиль",
+      unitPrice: 1540,
+      sum: 3080,
+    });
+  });
+
+  it("rejects a wooden wick in a mini candle", () => {
+    expect(priceLine({ slug: "cedra", variant: "mini", wick: "wood", qty: 1 })).toBeTypeOf("string");
+  });
+
+  it("keeps cotton and wooden lines apart in the cart", () => {
+    expect(lineKey({ slug: "cedra", variant: "200", wick: "wood" })).not.toBe(
+      lineKey({ slug: "cedra", variant: "200", wick: "cotton" }),
+    );
+    expect(lineKey({ slug: "cedra", variant: "200", wick: "cotton" })).toBe(lineKey({ slug: "cedra", variant: "200" }));
   });
 });

@@ -181,7 +181,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
               <summary className="cursor-pointer font-semibold">Состав и характеристики</summary>
               <ul className="mt-3 space-y-1 text-sm text-muted">
                 <li>Воск: соево-кокосовый, растительный</li>
-                <li>Фитиль: хлопковый, без свинца</li>
+                <li>Фитиль: хлопковый — ровное тихое пламя, или деревянный — потрескивает, как камин (+150 ₽, для 200 и 400 мл)</li>
                 <li>Аромат: парфюмерная отдушка для свечей</li>
                 <li>Банка: стекло, можно вернуть по программе Retour</li>
                 {isMoment && (

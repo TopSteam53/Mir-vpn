@@ -5,20 +5,23 @@ import { useState } from "react";
 import type { Product, VariantId } from "@/data/products";
 import { cart } from "@/lib/cart-store";
 import { reachGoal } from "@/lib/metrika";
-import { formatRub, MAX_QTY } from "@/lib/pricing";
+import { builderWicks } from "@/data/builder";
+import { formatRub, MAX_QTY, type WickId } from "@/lib/pricing";
 
 type PickOption = { slug: string; name: string; label: string };
 
 export function AddToCart({ product, pickOptions = [] }: { product: Product; pickOptions?: PickOption[] }) {
   const [variant, setVariant] = useState<VariantId>("200");
+  const [wick, setWick] = useState<WickId>("cotton");
   const [picks, setPicks] = useState<string[]>([]);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
   const needPicks = product.kind === "set" ? product.picks : 0;
+  const wickPrice = builderWicks.find((w) => w.id === wick)?.price ?? 0;
   const price =
     product.kind === "moment"
-      ? product.variants.find((v) => v.id === variant)!.price
+      ? product.variants.find((v) => v.id === variant)!.price + wickPrice
       : product.price;
   const ready = picks.length === needPicks;
 
@@ -37,6 +40,7 @@ export function AddToCart({ product, pickOptions = [] }: { product: Product; pic
     cart.add({
       slug: product.slug,
       variant: product.kind === "moment" ? variant : undefined,
+      wick: product.kind === "moment" ? wick : undefined,
       picks: needPicks ? picks : undefined,
       qty,
     });
@@ -58,6 +62,8 @@ export function AddToCart({ product, pickOptions = [] }: { product: Product; pic
                 aria-checked={variant === v.id}
                 onClick={() => {
                   setVariant(v.id);
+                  // Деревянный фитиль не помещается в мини-банку
+                  if (v.id === "mini") setWick("cotton");
                   setAdded(false);
                 }}
                 className="rounded-2xl border border-line p-3 text-left transition-colors aria-checked:border-amber aria-checked:bg-amber/10"
@@ -68,6 +74,36 @@ export function AddToCart({ product, pickOptions = [] }: { product: Product; pic
                 </span>
               </button>
             ))}
+          </div>
+        </fieldset>
+      )}
+
+      {product.kind === "moment" && (
+        <fieldset>
+          <legend className="eyebrow">Фитиль</legend>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2" role="radiogroup">
+            {builderWicks.map((w) => {
+              const disabled = w.id === "wood" && variant === "mini";
+              return (
+                <button
+                  key={w.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={wick === w.id}
+                  disabled={disabled}
+                  onClick={() => {
+                    setWick(w.id);
+                    setAdded(false);
+                  }}
+                  className="rounded-2xl border border-line p-3 text-left transition-colors aria-checked:border-amber aria-checked:bg-amber/10 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <span className="block font-semibold">{w.label}</span>
+                  <span className="block text-sm text-muted">
+                    {disabled ? "не для мини-свечи" : `${w.hint}${w.price ? ` · +${formatRub(w.price)}` : ""}`}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </fieldset>
       )}

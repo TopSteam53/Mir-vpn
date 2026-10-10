@@ -1,3 +1,4 @@
+import { builderWicks } from "@/data/builder";
 import { builderError, builderPrice, describeBuilder, type BuilderConfig } from "@/lib/builder";
 import { getProduct, type VariantId } from "@/data/products";
 import { getStory } from "@/data/stories";
@@ -11,6 +12,8 @@ import {
 export type CartLine = {
   slug: string;
   variant?: VariantId;
+  /** Фитиль для свечи из каталога; по умолчанию хлопковый */
+  wick?: WickId;
   /** Выбранные моменты для набора «Пролог» */
   picks?: string[];
   /** Конфигурация из конструктора, когда slug = CUSTOM_SLUG */
@@ -19,6 +22,8 @@ export type CartLine = {
 };
 
 export const CUSTOM_SLUG = "custom";
+
+export type WickId = (typeof builderWicks)[number]["id"];
 
 export type PricedLine = {
   title: string;
@@ -47,6 +52,7 @@ export function lineKey(line: Omit<CartLine, "qty">): string {
   return [
     line.slug,
     line.variant ?? "",
+    line.wick && line.wick !== "cotton" ? line.wick : "",
     (line.picks ?? []).join("+"),
     line.custom ? JSON.stringify(line.custom) : "",
   ].join("|");
@@ -75,11 +81,15 @@ export function priceLine(line: CartLine): PricedLine | string {
   if (product.kind === "moment") {
     const variant = product.variants.find((v) => v.id === line.variant);
     if (!variant) return `Выберите объём для «${product.name}»`;
+    const wick = builderWicks.find((w) => w.id === (line.wick ?? "cotton"));
+    if (!wick) return "Неизвестный фитиль";
+    if (wick.id === "wood" && variant.id === "mini") return "Деревянный фитиль не подходит для мини-свечи";
+    const unitPrice = variant.price + wick.price;
     return {
-      title: `${product.name}, ${variant.label}`,
-      unitPrice: variant.price,
+      title: `№ ${product.code} ${product.name}, ${variant.label}${wick.id === "wood" ? ", деревянный фитиль" : ""}`,
+      unitPrice,
       qty: line.qty,
-      sum: variant.price * line.qty,
+      sum: unitPrice * line.qty,
     };
   }
 

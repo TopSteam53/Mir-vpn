@@ -27,6 +27,7 @@ export const builderSchema = z.object({
 export const cartLineSchema = z.object({
   slug: z.string().max(80),
   variant: z.enum(["mini", "200", "400"]).optional(),
+  wick: z.enum(["cotton", "wood"]).optional(),
   picks: z.array(z.string().max(80)).max(10).optional(),
   custom: builderSchema.optional(),
   qty: z.number().int().min(1).max(MAX_QTY),
