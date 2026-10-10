@@ -1,0 +1,110 @@
+"use client";
+
+import Link from "next/link";
+import { getProduct } from "@/data/products";
+import { getStory } from "@/data/stories";
+import { CandleArt } from "@/components/CandleArt";
+import { cart, useCart } from "@/lib/cart-store";
+import { formatRub, lineKey, MAX_QTY, priceLine } from "@/lib/pricing";
+
+export function CartView() {
+  const lines = useCart();
+  const rows = lines.map((line) => ({ line, key: lineKey(line), priced: priceLine(line) }));
+  const subtotal = rows.reduce((s, r) => s + (typeof r.priced === "string" ? 0 : r.priced.sum), 0);
+  const hasErrors = rows.some((r) => typeof r.priced === "string");
+
+  if (lines.length === 0) {
+    return (
+      <div className="py-16 text-center">
+        <p className="text-lg text-muted">В корзине пока пусто.</p>
+        <Link href="/catalog" className="btn btn-primary mt-6">
+          В каталог
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]">
+      <ul className="divide-y divide-line border-y border-line">
+        {rows.map(({ line, key, priced }) => {
+          const product = getProduct(line.slug);
+          const color = product ? getStory(product.storySlug)?.color ?? "#c8862e" : "#c8862e";
+          return (
+            <li key={key} className="flex gap-4 py-5">
+              <div className="flex h-24 w-20 shrink-0 items-center justify-center rounded-2xl bg-surface">
+                <CandleArt
+                  color={color}
+                  number={product?.kind === "moment" ? product.number : undefined}
+                  className="h-20"
+                />
+              </div>
+              <div className="flex flex-1 flex-col gap-2">
+                {typeof priced === "string" ? (
+                  <p className="text-error">{priced}</p>
+                ) : (
+                  <Link href={`/product/${line.slug}`} className="font-semibold hover:text-amber-strong">
+                    {priced.title}
+                  </Link>
+                )}
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex h-10 items-center rounded-full border border-line">
+                    <button
+                      type="button"
+                      className="h-10 w-10"
+                      onClick={() => cart.setQty(key, line.qty - 1)}
+                      aria-label="Меньше"
+                    >
+                      −
+                    </button>
+                    <span className="w-6 text-center">{line.qty}</span>
+                    <button
+                      type="button"
+                      className="h-10 w-10"
+                      onClick={() => cart.setQty(key, Math.min(MAX_QTY, line.qty + 1))}
+                      aria-label="Больше"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    {typeof priced !== "string" && <span className="font-semibold">{formatRub(priced.sum)}</span>}
+                    <button
+                      type="button"
+                      className="text-sm text-muted underline underline-offset-4 hover:text-ink"
+                      onClick={() => cart.remove(key)}
+                    >
+                      Удалить
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      <aside className="h-fit rounded-3xl border border-line bg-surface p-6 lg:sticky lg:top-24">
+        <div className="flex justify-between text-lg">
+          <span>Товары</span>
+          <span className="font-semibold">{formatRub(subtotal)}</span>
+        </div>
+        <p className="mt-2 text-sm text-muted">
+          Доставка, промокод и подарочная упаковка — на следующем шаге.
+        </p>
+        {hasErrors && (
+          <p className="mt-4 text-sm text-error">Удалите недоступные товары, чтобы продолжить.</p>
+        )}
+        {hasErrors ? (
+          <button type="button" className="btn btn-primary mt-6 w-full" disabled>
+            Оформить заказ
+          </button>
+        ) : (
+          <Link href="/checkout" className="btn btn-primary mt-6 w-full">
+            Оформить заказ
+          </Link>
+        )}
+      </aside>
+    </div>
+  );
+}

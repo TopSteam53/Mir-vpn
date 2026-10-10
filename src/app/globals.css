@@ -1,0 +1,226 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --bg: #f6f0e6;
+  --surface: #fffaf2;
+  --ink: #2a1c12;
+  --muted: #6f5b4a;
+  --line: rgb(42 28 18 / 0.13);
+  --amber: #c8862e;
+  --amber-strong: #8f5a14;
+  --honey: #e9b65c;
+  --on-amber: #1f140b;
+  --resin: #2a1c12;
+  --on-resin: #f6efe4;
+  --glow: rgb(233 182 92 / 0.35);
+  --error: #a3262a;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15100b;
+    --surface: #1f1710;
+    --ink: #f3e9da;
+    --muted: #b9a58f;
+    --line: rgb(243 233 218 / 0.14);
+    --amber: #e0a048;
+    --amber-strong: #f0b35e;
+    --honey: #f2c675;
+    --on-amber: #1f140b;
+    --resin: #0e0a07;
+    --on-resin: #f3e9da;
+    --glow: rgb(240 179 94 / 0.25);
+    --error: #ef7b6f;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #15100b;
+  --surface: #1f1710;
+  --ink: #f3e9da;
+  --muted: #b9a58f;
+  --line: rgb(243 233 218 / 0.14);
+  --amber: #e0a048;
+  --amber-strong: #f0b35e;
+  --honey: #f2c675;
+  --on-amber: #1f140b;
+  --resin: #0e0a07;
+  --on-resin: #f3e9da;
+  --glow: rgb(240 179 94 / 0.25);
+  --error: #ef7b6f;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-amber: var(--amber);
+  --color-amber-strong: var(--amber-strong);
+  --color-honey: var(--honey);
+  --color-on-amber: var(--on-amber);
+  --color-resin: var(--resin);
+  --color-on-resin: var(--on-resin);
+  --color-error: var(--error);
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-display: var(--font-playfair), Georgia, serif;
+}
+
+html {
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--honey);
+  color: var(--on-amber);
+}
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+/* Логотип и заголовки — капсом с разрядкой, как у парфюмерных домов */
+.wordmark {
+  font-family: var(--font-display);
+  letter-spacing: 0.28em;
+  font-weight: 500;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.glow {
+  background: radial-gradient(60% 60% at 50% 40%, var(--glow), transparent 70%);
+}
+
+/* Кнопки */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0 1.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn-primary {
+  background: var(--amber);
+  color: var(--on-amber);
+}
+.btn-primary:hover {
+  background: var(--honey);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-ghost {
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+.btn-ghost:hover {
+  border-color: var(--amber);
+}
+
+.field {
+  width: 100%;
+  min-height: 3rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 0.75rem 1rem;
+  color: var(--ink);
+}
+.field:focus {
+  border-color: var(--amber);
+  outline: none;
+}
+
+.chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.875rem;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.chip[aria-pressed="true"],
+.chip[aria-checked="true"] {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+
+/* Пламя свечи */
+@keyframes flicker {
+  0%, 100% { transform: scale(1, 1) rotate(0deg); opacity: 1; }
+  25% { transform: scale(0.96, 1.04) rotate(-1.5deg); opacity: 0.94; }
+  50% { transform: scale(1.03, 0.97) rotate(1deg); }
+  75% { transform: scale(0.98, 1.02) rotate(-0.5deg); opacity: 0.97; }
+}
+.flame {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: flicker 2.6s ease-in-out infinite;
+}
+
+/* Появление блоков при прокрутке */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flame { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+}
+
+.prose-ambre p + p {
+  margin-top: 1rem;
+}
+.prose-ambre h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin: 2rem 0 0.75rem;
+}
+.prose-ambre ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin: 0.75rem 0;
+}
+.prose-ambre li + li {
+  margin-top: 0.35rem;
+}
+.prose-ambre a {
+  color: var(--amber-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
