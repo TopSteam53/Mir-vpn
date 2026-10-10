@@ -55,13 +55,14 @@ export default async function StoryPage({ params }: PageProps<"/stories/[slug]">
               >
                 <div className="relative mx-auto w-full max-w-xs">
                   <div className="glow absolute -inset-8" aria-hidden="true" />
-                  <CandleArt color={story.color} number={m.number} lit={available} className="relative w-full" />
+                  <CandleArt color={story.color} code={m.code} name={m.name} lit={available} className="relative w-full" />
                 </div>
                 <div>
                   <p className="font-display text-6xl" style={{ color: story.color }}>
-                    {momentNumber(m.number)}
+                    {momentNumber(m.code)}
                   </p>
-                  <h2 className="mt-2 font-display text-4xl">{m.name}</h2>
+                  <h2 className="mt-2 font-display text-5xl tracking-wide">{m.name}</h2>
+                  <p className="mt-1 text-lg italic text-muted">{m.title.toLowerCase()}</p>
                   <p className="mt-4 text-lg text-muted">{m.scene}</p>
                   <dl className="mt-6 grid grid-cols-3 gap-3 text-sm">
                     {(

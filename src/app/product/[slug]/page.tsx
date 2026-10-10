@@ -28,7 +28,8 @@ export async function generateMetadata({ params }: PageProps<"/product/[slug]">)
     product.kind === "moment"
       ? `${product.scene} Ноты: ${product.notes.top}, ${product.notes.heart}, ${product.notes.base}.`
       : product.description;
-  return { title: product.name, description, openGraph: { title: product.name, description } };
+  const title = product.kind === "moment" ? `${product.name} № ${product.code} — свеча «${product.title}»` : product.name;
+  return { title, description, openGraph: { title, description } };
 }
 
 function Scale({ label, value, left, right }: { label: string; value: number; left?: string; right?: string }) {
@@ -93,11 +94,11 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
         <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[2rem] border border-line bg-surface md:sticky md:top-24">
           <div className="glow absolute inset-0" aria-hidden="true" />
           {isMoment ? (
-            <CandleArt color={story.color} number={product.number} lit={available} className="relative h-4/5" />
+            <CandleArt color={story.color} code={product.code} name={product.name} lit={available} className="relative h-4/5" />
           ) : (
             <div className="relative flex items-end gap-2">
               {storyMoments.slice(0, product.picks || 5).map((m) => (
-                <CandleArt key={m.slug} color={story.color} number={m.number} className="h-28 sm:h-36" />
+                <CandleArt key={m.slug} color={story.color} code={m.code} className="h-28 sm:h-36" />
               ))}
             </div>
           )}
@@ -107,9 +108,10 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
           <p className="eyebrow flex items-center gap-2">
             <span className="h-2 w-2 rounded-full" style={{ background: story.color }} aria-hidden="true" />
             {story.title}
-            {isMoment && ` · ${momentNumber(product.number)}`}
+            {isMoment && ` · ${momentNumber(product.code)}`}
           </p>
-          <h1 className="mt-3 font-display text-4xl sm:text-5xl">{product.name}</h1>
+          <h1 className="mt-3 font-display text-5xl tracking-wide sm:text-6xl">{product.name}</h1>
+          {isMoment && <p className="mt-1 text-lg italic text-muted">{product.title.toLowerCase()}</p>}
           <p className="mt-5 text-lg text-muted">{isMoment ? product.scene : product.description}</p>
 
           {isMoment && (
@@ -140,7 +142,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
             <ul className="mt-6 space-y-1 text-sm">
               {storyMoments.map((m) => (
                 <li key={m.slug}>
-                  {momentNumber(m.number)} · {m.name}
+                  {momentNumber(m.code)} · {m.name}
                 </li>
               ))}
             </ul>
@@ -153,7 +155,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
                 pickOptions={storyMoments.map((m) => ({
                   slug: m.slug,
                   name: m.name,
-                  label: momentNumber(m.number),
+                  label: momentNumber(m.code),
                 }))}
               />
             ) : (
@@ -203,14 +205,14 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
             <nav className="mt-8 flex justify-between gap-4 text-sm" aria-label="Другие моменты истории">
               {prev ? (
                 <Link href={`/product/${prev.slug}`} className="hover:text-amber-strong">
-                  ← {momentNumber(prev.number)} {prev.name}
+                  ← {momentNumber(prev.code)} {prev.name}
                 </Link>
               ) : (
                 <span />
               )}
               {next && (
                 <Link href={`/product/${next.slug}`} className="text-right hover:text-amber-strong">
-                  {momentNumber(next.number)} {next.name} →
+                  {momentNumber(next.code)} {next.name} →
                 </Link>
               )}
             </nav>

@@ -5,32 +5,32 @@ const line = (sum: number, qty = 1): PricedLine => ({ title: "x", unitPrice: sum
 
 describe("priceLine", () => {
   it("prices a moment by its variant", () => {
-    expect(priceLine({ slug: "katok-v-parke", variant: "200", qty: 2 })).toMatchObject({
+    expect(priceLine({ slug: "inej", variant: "200", qty: 2 })).toMatchObject({
       unitPrice: 1390,
       sum: 2780,
     });
   });
 
   it("rejects products from stories that are not on sale yet", () => {
-    expect(priceLine({ slug: "neon-posle-dozhdya", variant: "200", qty: 1 })).toBeTypeOf("string");
+    expect(priceLine({ slug: "neon", variant: "200", qty: 1 })).toBeTypeOf("string");
   });
 
   it("rejects unknown products, missing variants and bad quantities", () => {
     expect(priceLine({ slug: "nope", qty: 1 })).toBeTypeOf("string");
-    expect(priceLine({ slug: "katok-v-parke", qty: 1 })).toBeTypeOf("string");
-    expect(priceLine({ slug: "katok-v-parke", variant: "200", qty: 0 })).toBeTypeOf("string");
-    expect(priceLine({ slug: "katok-v-parke", variant: "200", qty: 1.5 })).toBeTypeOf("string");
+    expect(priceLine({ slug: "inej", qty: 1 })).toBeTypeOf("string");
+    expect(priceLine({ slug: "inej", variant: "200", qty: 0 })).toBeTypeOf("string");
+    expect(priceLine({ slug: "inej", variant: "200", qty: 1.5 })).toBeTypeOf("string");
   });
 
   it("requires exactly N distinct moments of the same story for a pick set", () => {
-    const picks = ["katok-v-parke", "mandarin-v-karmane", "bengalskie-ogni"];
+    const picks = ["inej", "cedra", "iskry"];
     expect(priceLine({ slug: "prolog-dekabr", picks, qty: 1 })).toMatchObject({ sum: 1490 });
     expect(priceLine({ slug: "prolog-dekabr", picks: picks.slice(0, 2), qty: 1 })).toBeTypeOf("string");
     expect(
-      priceLine({ slug: "prolog-dekabr", picks: ["katok-v-parke", "katok-v-parke", "bengalskie-ogni"], qty: 1 }),
+      priceLine({ slug: "prolog-dekabr", picks: ["inej", "inej", "iskry"], qty: 1 }),
     ).toBeTypeOf("string");
     expect(
-      priceLine({ slug: "prolog-dekabr", picks: ["katok-v-parke", "neon-posle-dozhdya", "bengalskie-ogni"], qty: 1 }),
+      priceLine({ slug: "prolog-dekabr", picks: ["inej", "neon", "iskry"], qty: 1 }),
     ).toBeTypeOf("string");
   });
 });

@@ -40,7 +40,7 @@ export default function Home() {
           </div>
           <div className="relative mx-auto w-full max-w-sm">
             <div className="glow absolute -inset-10" aria-hidden="true" />
-            <CandleArt color={current.color} number={1} className="relative w-full" />
+            <CandleArt color={current.color} code={momentsOf(current.slug)[1].code} name={momentsOf(current.slug)[1].name} className="relative w-full" />
           </div>
         </div>
       </section>
@@ -74,7 +74,7 @@ export default function Home() {
       <section className="mx-auto max-w-6xl px-4 py-12">
         <Reveal className="grid gap-6 md:grid-cols-3">
           {[
-            ["1 свеча = 1 момент", "Каток в парке, такси в три ночи, первое утро января. Узнаваемые моменты, переведённые в аромат."],
+            ["1 свеча = 1 момент", "Иней — каток в парке. Неон — город после дождя. Плед — первое утро января. Одно слово и момент, переведённый в аромат."],
             ["5 моментов = история", "Свечи коллекции складываются в историю. Зажигай по порядку, и она проиграется заново."],
             ["Новая история — каждый сезон", "Четыре истории в год, лимитки к праздникам и коллаборации."],
           ].map(([title, text]) => (

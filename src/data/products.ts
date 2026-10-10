@@ -23,7 +23,12 @@ export type Moment = {
   slug: string;
   storySlug: string;
   number: number;
+  /** Сквозной номер: первая цифра — история, две последние — момент (101, 205…) */
+  code: number;
+  /** Короткое название, одно слово */
   name: string;
+  /** Момент, о котором свеча: «Каток в парке» */
+  title: string;
   scene: string;
   notes: { top: string; heart: string; base: string };
   family: Family;
@@ -53,11 +58,19 @@ const VARIANTS: Variant[] = [
   { id: "400", label: "400 мл, 2 фитиля", volumeMl: 400, burnHours: 60, price: 2290 },
 ];
 
+const STORY_INDEX: Record<string, number> = {
+  "tot-samyj-dekabr": 1,
+  "gorod-ne-spit": 2,
+  "gde-to-na-yuge": 3,
+  "pervaya-svoya-kvartira": 4,
+};
+
 function moment(
   storySlug: string,
   number: number,
   slug: string,
   name: string,
+  title: string,
   scene: string,
   notes: [string, string, string],
   family: Family,
@@ -69,7 +82,9 @@ function moment(
     slug,
     storySlug,
     number,
+    code: STORY_INDEX[storySlug] * 100 + number,
     name,
+    title,
     scene,
     notes: { top: notes[0], heart: notes[1], base: notes[2] },
     family,
@@ -85,67 +100,67 @@ const SOUTH = "gde-to-na-yuge";
 const FLAT = "pervaya-svoya-kvartira";
 
 export const moments: Moment[] = [
-  moment(DEC, 1, "katok-v-parke", "Каток в парке",
+  moment(DEC, 1, "inej", "Иней", "Каток в парке",
     "Вечер, гирлянды, музыка из колонок. Щёки мёрзнут, а уходить не хочется.",
     ["морозная мята", "хвоя", "белый мускус"], "fresh", 3, 2),
-  moment(DEC, 2, "mandarin-v-karmane", "Мандарин в кармане",
+  moment(DEC, 2, "cedra", "Цедра", "Мандарин в кармане",
     "Ты чистишь его прямо на улице, и пальцы пахнут мандарином до самого дома.",
     ["мандарин", "гвоздика", "снежная свежесть"], "spicy", 4, 3),
-  moment(DEC, 3, "yolka-v-semnoj-kvartire", "Ёлка в съёмной квартире",
+  moment(DEC, 3, "smola", "Смола", "Ёлка в съёмной квартире",
     "Первая своя ёлка. Игрушки с распродажи, но лучше неё нет.",
     ["хвоя", "смола", "корица"], "woody", 4, 4),
-  moment(DEC, 4, "bengalskie-ogni", "Бенгальские огни",
+  moment(DEC, 4, "iskry", "Искры", "Бенгальские огни",
     "Без пяти полночь, балкон, все загадывают желание.",
     ["искристый апельсин", "дымок", "ваниль"], "gourmand", 3, 4),
-  moment(DEC, 5, "pervoe-utro-yanvarya", "Первое утро января",
+  moment(DEC, 5, "pled", "Плед", "Первое утро января",
     "Тишина, плед, какао и никаких планов.",
     ["какао", "маршмеллоу", "кашемир"], "gourmand", 3, 5),
 
-  moment(CITY, 1, "krysha-na-zakate", "Крыша на закате",
+  moment(CITY, 1, "zakat", "Закат", "Крыша на закате",
     "Нагретый за день бетон, город внизу становится оранжевым.",
     ["апельсин", "амбра", "тёплый камень"], "woody", 3, 4),
-  moment(CITY, 2, "neon-posle-dozhdya", "Неон после дождя",
+  moment(CITY, 2, "neon", "Неон", "Неон после дождя",
     "Час ночи, асфальт ещё мокрый, вывески отражаются в лужах.",
     ["лайм", "озон", "холодный металл"], "fresh", 3, 1),
-  moment(CITY, 3, "vinil-v-bare", "Винил в баре",
+  moment(CITY, 3, "vinil", "Винил", "Винил в баре",
     "Кто-то поставил пластинку, и все замолчали.",
     ["вишня", "кожа", "дубовая бочка"], "woody", 4, 4),
-  moment(CITY, 4, "taksi-v-tri-nochi", "Такси в 3:00",
+  moment(CITY, 4, "polnoch", "Полночь", "Такси в 3:00",
     "Тёплый салон, кожаные сиденья, огни за окном.",
     ["кожа", "табак", "ветивер"], "woody", 4, 4),
-  moment(CITY, 5, "kofejnya-do-otkrytiya", "Кофейня до открытия",
+  moment(CITY, 5, "obzharka", "Обжарка", "Кофейня до открытия",
     "Ты первый гость, бариста ещё раскладывает выпечку.",
     ["эспрессо", "кардамон", "сливочная ваниль"], "gourmand", 4, 4),
 
-  moment(SOUTH, 1, "trassa-na-rassvete", "Трасса на рассвете",
+  moment(SOUTH, 1, "trassa", "Трасса", "Трасса на рассвете",
     "Выехали в пять утра, окна открыты, впереди полторы тысячи километров.",
     ["грейпфрут", "свежая трава", "утренний воздух"], "fresh", 3, 1),
-  moment(SOUTH, 2, "inzhir-s-rynka", "Инжир с рынка",
+  moment(SOUTH, 2, "inzhir", "Инжир", "Инжир с рынка",
     "Остановка у дороги, тёплые фрукты прямо из ящика.",
     ["инжир", "зелёный лист", "мёд"], "gourmand", 3, 3),
-  moment(SOUTH, 3, "solncezashchitnyj-krem", "Солнцезащитный крем",
+  moment(SOUTH, 3, "zagar", "Загар", "Солнцезащитный крем",
     "Пляж, полотенце, и крем пахнет летом.",
     ["кокос", "тиаре", "солёная кожа"], "floral", 3, 3),
-  moment(SOUTH, 4, "nochnoe-more", "Ночное море",
+  moment(SOUTH, 4, "priboj", "Прибой", "Ночное море",
     "Костёр, гитара, волны в темноте.",
     ["морская соль", "водоросли", "дымок плавника"], "fresh", 3, 2),
-  moment(SOUTH, 5, "doroga-domoj", "Дорога домой",
+  moment(SOUTH, 5, "pesok", "Песок", "Дорога домой",
     "Песок в кроссовках и фотки, которые разбирать до осени.",
     ["сухая трава", "кедр", "тёплый мускус"], "woody", 3, 4),
 
-  moment(FLAT, 1, "korobki-i-picca", "Коробки и пицца",
+  moment(FLAT, 1, "pereezd", "Переезд", "Коробки и пицца",
     "Вещи ещё не разобраны, едите прямо на полу.",
     ["базилик", "томатный лист", "тёплое тесто"], "fresh", 3, 3),
-  moment(FLAT, 2, "monstera-na-podokonnike", "Монстера на подоконнике",
+  moment(FLAT, 2, "monstera", "Монстера", "Монстера на подоконнике",
     "Первое растение, у него уже есть имя.",
     ["зелёные листья", "бамбук", "влажная земля"], "fresh", 2, 2),
-  moment(FLAT, 3, "svezhie-prostyni", "Свежие простыни",
+  moment(FLAT, 3, "hlopok", "Хлопок", "Свежие простыни",
     "Новая постель, впервые спишь на своём.",
     ["лаванда", "хлопок", "белый мускус"], "floral", 2, 2),
-  moment(FLAT, 4, "subbotnie-bliny", "Субботние блины",
+  moment(FLAT, 4, "subbota", "Суббота", "Субботние блины",
     "Никто не торопит, на кухне играет музыка.",
     ["сливочное масло", "ваниль", "кленовый сироп"], "gourmand", 4, 5),
-  moment(FLAT, 5, "klyuchi-ot-doma", "Ключи от дома",
+  moment(FLAT, 5, "klyuch", "Ключ", "Ключи от дома",
     "Ты возвращаешься, и это правда твой дом.",
     ["бергамот", "чай", "сандал"], "woody", 3, 4),
 ];
@@ -192,8 +207,8 @@ export function setsOf(storySlug: string): SetProduct[] {
   return sets.filter((s) => s.storySlug === storySlug);
 }
 
-export function momentNumber(n: number): string {
-  return `№ ${String(n).padStart(2, "0")}`;
+export function momentNumber(code: number): string {
+  return `№ ${code}`;
 }
 
 export function minPrice(p: Product): number {

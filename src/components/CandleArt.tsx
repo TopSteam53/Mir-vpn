@@ -3,13 +3,16 @@ import { useId } from "react";
 type Props = {
   /** Цвет истории для этикетки и отблеска */
   color: string;
-  number?: number;
+  /** Сквозной номер момента, например 102 */
+  code?: number;
+  /** Название свечи, печатается на этикетке */
+  name?: string;
   lit?: boolean;
   className?: string;
 };
 
 /** Иллюстрация свечи в янтарной банке. Временная замена фотографиям. */
-export function CandleArt({ color, number, lit = true, className }: Props) {
+export function CandleArt({ color, code, name, lit = true, className }: Props) {
   const id = useId().replace(/:/g, "");
   return (
     <svg viewBox="0 0 200 260" className={className} role="img" aria-hidden="true">
@@ -45,25 +48,38 @@ export function CandleArt({ color, number, lit = true, className }: Props) {
       <rect x="62" y="146" width="76" height="5" rx="2" fill={color} />
       <text
         x="100"
-        y="172"
+        y={name ? 162 : 172}
         textAnchor="middle"
         fontFamily="Georgia, serif"
-        fontSize="10"
+        fontSize="7.5"
         letterSpacing="2.5"
         fill="#2a1c12"
       >
         AMBRE&apos;
       </text>
-      {number !== undefined && (
+      {name && (
         <text
           x="100"
-          y="194"
+          y="180"
           textAnchor="middle"
           fontFamily="Georgia, serif"
-          fontSize="13"
+          fontSize={name.length > 7 ? 10 : 12.5}
+          letterSpacing="1.5"
+          fill="#2a1c12"
+        >
+          {name.toUpperCase()}
+        </text>
+      )}
+      {code !== undefined && (
+        <text
+          x="100"
+          y={name ? 197 : 194}
+          textAnchor="middle"
+          fontFamily="Georgia, serif"
+          fontSize={name ? 9 : 13}
           fill={color}
         >
-          № {String(number).padStart(2, "0")}
+          № {code}
         </text>
       )}
 

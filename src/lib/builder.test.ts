@@ -14,7 +14,7 @@ describe("candle builder", () => {
   });
 
   it("drops the blend surcharge for a ready scent and adds option prices", () => {
-    const c = config({ scent: "katok-v-parke", jar: "black", wick: "wood", wax: "sage", lid: "metal", intensity: "strong", size: "400" });
+    const c = config({ scent: "inej", jar: "black", wick: "wood", wax: "sage", lid: "metal", intensity: "strong", size: "400" });
     expect(builderError(c)).toBeNull();
     expect(builderPrice(c)).toBe(2590 + 150 + 150 + 100 + 150 + 100);
   });
@@ -24,7 +24,7 @@ describe("candle builder", () => {
     expect(builderError(config({ size: "mini", wick: "wood" }))).toMatch(/мини/);
     expect(builderError(config({ notes: {} }))).toMatch(/ноту/);
     expect(builderError(config({ notes: { top: "vanilla" } }))).toBe("Неизвестная нота");
-    expect(builderError(config({ scent: "neon-posle-dozhdya" }))).toMatch(/недоступен/);
+    expect(builderError(config({ scent: "neon" }))).toMatch(/недоступен/);
     expect(builderError(config({ jar: "gold" as BuilderConfig["jar"] }))).toMatch(/банку/);
   });
 

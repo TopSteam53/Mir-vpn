@@ -21,7 +21,8 @@ export function ProductCard({ product }: { product: Product }) {
         {isMoment ? (
           <CandleArt
             color={story.color}
-            number={product.number}
+            code={product.code}
+            name={product.name}
             lit={available}
             className="relative h-4/5 transition-transform duration-500 group-hover:-translate-y-1"
           />
@@ -42,9 +43,10 @@ export function ProductCard({ product }: { product: Product }) {
         <p className="eyebrow flex items-center gap-2">
           <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: story.color }} aria-hidden="true" />
           {story.title}
-          {isMoment && ` · ${momentNumber(product.number)}`}
+          {isMoment && ` · ${momentNumber(product.code)}`}
         </p>
-        <h3 className="mt-1 font-display text-xl">{product.name}</h3>
+        <h3 className="mt-1 font-display text-2xl tracking-wide">{product.name}</h3>
+        {isMoment && <p className="text-sm italic text-muted">{product.title.toLowerCase()}</p>}
         <p className="mt-2 flex-1 text-sm text-muted">
           {isMoment
             ? [product.notes.top, product.notes.heart, product.notes.base].join(" · ")

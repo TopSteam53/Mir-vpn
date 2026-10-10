@@ -46,7 +46,8 @@ export function CartView() {
                 ) : (
                   <CandleArt
                     color={color}
-                    number={product?.kind === "moment" ? product.number : undefined}
+                    code={product?.kind === "moment" ? product.code : undefined}
+                    name={product?.kind === "moment" ? product.name : undefined}
                     className="h-20"
                   />
                 )}

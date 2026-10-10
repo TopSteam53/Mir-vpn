@@ -89,7 +89,10 @@ export function builderPrice(c: BuilderConfig): number {
 }
 
 export function scentLabel(c: BuilderConfig): string {
-  if (c.scent !== null) return `аромат «${getMoment(c.scent)?.name ?? c.scent}»`;
+  if (c.scent !== null) {
+    const m = getMoment(c.scent);
+    return m ? `аромат № ${m.code} «${m.name}»` : `аромат ${c.scent}`;
+  }
   const notes = noteLevels
     .map((l) => builderNotes.find((n) => n.id === c.notes[l.id])?.label)
     .filter(Boolean);

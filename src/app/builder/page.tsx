@@ -23,7 +23,7 @@ export default function BuilderPage() {
     .filter((m) => onSale.has(m.storySlug))
     .map((m) => ({
       slug: m.slug,
-      name: m.name,
+      name: `№ ${m.code} ${m.name} · ${m.title.toLowerCase()}`,
       notes: [m.notes.top, m.notes.heart, m.notes.base].join(" · "),
       noteIds: noteIdsFor([m.notes.top, m.notes.heart, m.notes.base]),
     }));
