@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CatalogGrid } from "@/components/CatalogGrid";
+import { GiftCard } from "@/components/GiftCard";
 import { ProductCard } from "@/components/ProductCard";
 import { products } from "@/data/products";
 import { stories } from "@/data/stories";
@@ -26,6 +27,20 @@ export default function CatalogPage() {
       </p>
 
       <CatalogGrid items={items} />
+
+      <Link
+        href="/gift"
+        className="mt-16 grid items-center gap-6 rounded-3xl border border-line bg-surface p-6 transition-colors hover:border-amber sm:grid-cols-[240px_1fr] sm:p-8"
+      >
+        <GiftCard amount={3000} />
+        <div>
+          <h2 className="font-display text-3xl">Подарочный сертификат</h2>
+          <p className="mt-2 text-muted">
+            На 1 500, 3 000 или 5 000 ₽. Придёт получателю письмом в выбранный день, действует 12 месяцев.
+          </p>
+          <span className="mt-4 inline-block text-amber-strong underline underline-offset-4">Выбрать сертификат</span>
+        </div>
+      </Link>
 
       {upcoming.length > 0 && (
         <section className="mt-16 rounded-3xl border border-line p-8">

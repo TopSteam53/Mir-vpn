@@ -10,6 +10,7 @@ const NAV = [
   { href: "/stories", label: "Истории" },
   { href: "/catalog", label: "Каталог" },
   { href: "/builder", label: "Конструктор" },
+  { href: "/gift", label: "Сертификаты" },
   { href: "/retour", label: "Retour" },
   { href: "/corporate", label: "Компаниям" },
   { href: "/about", label: "О нас" },

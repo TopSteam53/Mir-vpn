@@ -1,5 +1,13 @@
 import { builderWicks } from "@/data/builder";
 import { builderError, builderPrice, describeBuilder, type BuilderConfig } from "@/lib/builder";
+import {
+  GIFT_MAX_DELAY_DAYS,
+  GIFT_MESSAGE_MAX,
+  GIFT_NAME_MAX,
+  GIFT_SLUG,
+  giftAmounts,
+  type GiftDetails,
+} from "@/data/gift";
 import { getProduct, type VariantId } from "@/data/products";
 import { getStory } from "@/data/stories";
 import {
@@ -18,6 +26,9 @@ export type CartLine = {
   picks?: string[];
   /** Конфигурация из конструктора, когда slug = CUSTOM_SLUG */
   custom?: BuilderConfig;
+  /** Номинал и данные получателя, когда slug = GIFT_SLUG */
+  amount?: number;
+  gift?: GiftDetails;
   qty: number;
 };
 
@@ -29,16 +40,25 @@ export type PricedLine = {
   title: string;
   /** Подробности для сборщика: состав своей свечи */
   details?: string;
+  /** Подарочный сертификат: не товар, на него не действуют скидки и доставка */
+  certificate?: boolean;
   unitPrice: number;
   qty: number;
   sum: number;
 };
 
-export type Promo =
-  | { code: string; kind: "percent"; value: number; label: string }
-  | { code: string; kind: "retour"; value: number; label: string };
+export type Promo = {
+  code: string;
+  /** percent — процент от товаров; fixed — сумма, не больше 30% товаров (Retour, пробники);
+   * certificate — подарочный сертификат, оплачивает товары целиком */
+  kind: "percent" | "fixed" | "certificate";
+  value: number;
+  label: string;
+};
 
 export type Totals = {
+  /** Сумма товаров, на которые действуют скидки и доставка (без сертификатов) */
+  goods: number;
   subtotal: number;
   discount: number;
   giftWrap: number;
@@ -55,6 +75,8 @@ export function lineKey(line: Omit<CartLine, "qty">): string {
     line.wick && line.wick !== "cotton" ? line.wick : "",
     (line.picks ?? []).join("+"),
     line.custom ? JSON.stringify(line.custom) : "",
+    line.amount ?? "",
+    line.gift ? JSON.stringify(line.gift) : "",
   ].join("|");
 }
 
@@ -68,6 +90,8 @@ export function priceLine(line: CartLine): PricedLine | string {
     const price = builderPrice(line.custom);
     return { ...describeBuilder(line.custom), unitPrice: price, qty: line.qty, sum: price * line.qty };
   }
+
+  if (line.slug === GIFT_SLUG) return priceGift(line);
 
   const product = getProduct(line.slug);
   if (!product) return `Товар не найден: ${line.slug}`;
@@ -112,10 +136,52 @@ export function priceLine(line: CartLine): PricedLine | string {
   return { title, unitPrice: product.price, qty: line.qty, sum: product.price * line.qty };
 }
 
-export function promoDiscount(subtotal: number, promo: Promo | null): number {
-  if (!promo || subtotal <= 0) return 0;
-  if (promo.kind === "percent") return Math.round((subtotal * promo.value) / 100);
-  return Math.min(promo.value, Math.floor(subtotal * RETOUR_MAX_SHARE));
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function giftError(gift: GiftDetails | undefined, today = new Date()): string | null {
+  if (!gift) return "Заполните данные получателя сертификата";
+  if (gift.to.trim().length < 2 || gift.to.length > GIFT_NAME_MAX) return "Укажите имя получателя";
+  if (gift.from.trim().length < 2 || gift.from.length > GIFT_NAME_MAX) return "Укажите, от кого подарок";
+  if (!EMAIL.test(gift.email.trim()) || gift.email.length > 120) return "Укажите e-mail получателя";
+  if (gift.message.length > GIFT_MESSAGE_MAX) return "Слишком длинное поздравление";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(gift.date)) return "Укажите дату отправки";
+  const day = today.toISOString().slice(0, 10);
+  const latest = new Date(today);
+  latest.setDate(latest.getDate() + GIFT_MAX_DELAY_DAYS);
+  if (gift.date < day || gift.date > latest.toISOString().slice(0, 10)) {
+    return "Дата отправки — от сегодня и не дальше чем через полгода";
+  }
+  return null;
+}
+
+function priceGift(line: CartLine): PricedLine | string {
+  if (!giftAmounts.includes(line.amount as (typeof giftAmounts)[number])) return "Выберите номинал сертификата";
+  if (!Number.isInteger(line.qty) || line.qty < 1 || line.qty > MAX_QTY) return "Неверное количество";
+  const error = giftError(line.gift);
+  if (error) return error;
+  const g = line.gift!;
+  const amount = line.amount!;
+  return {
+    title: `Подарочный сертификат на ${formatRub(amount)}`,
+    details: [
+      `кому: ${g.to.trim()}, от: ${g.from.trim()}`,
+      `отправить ${g.date.split("-").reverse().join(".")} на ${g.email.trim()}`,
+      g.message.trim() ? `«${g.message.trim()}»` : "",
+    ]
+      .filter(Boolean)
+      .join("; "),
+    certificate: true,
+    unitPrice: amount,
+    qty: line.qty,
+    sum: amount * line.qty,
+  };
+}
+
+export function promoDiscount(goods: number, promo: Promo | null): number {
+  if (!promo || goods <= 0) return 0;
+  if (promo.kind === "percent") return Math.round((goods * promo.value) / 100);
+  if (promo.kind === "certificate") return Math.min(promo.value, goods);
+  return Math.min(promo.value, Math.floor(goods * RETOUR_MAX_SHARE));
 }
 
 export function shippingPrice(id: ShippingId, goodsAfterDiscount: number): number {
@@ -132,10 +198,13 @@ export function computeTotals(
   promo: Promo | null,
 ): Totals {
   const subtotal = lines.reduce((s, l) => s + l.sum, 0);
-  const discount = promoDiscount(subtotal, promo);
-  const wrap = giftWrap && subtotal > 0 ? GIFT_WRAP_PRICE : 0;
-  const ship = subtotal > 0 ? shippingPrice(shipping, subtotal - discount) : 0;
+  const goods = lines.reduce((s, l) => s + (l.certificate ? 0 : l.sum), 0);
+  const discount = promoDiscount(goods, promo);
+  const wrap = giftWrap && goods > 0 ? GIFT_WRAP_PRICE : 0;
+  // Оплата сертификатом не отнимает бесплатную доставку: порог считаем по товарам до сертификата
+  const ship = goods > 0 ? shippingPrice(shipping, promo?.kind === "certificate" ? goods : goods - discount) : 0;
   return {
+    goods,
     subtotal,
     discount,
     giftWrap: wrap,

@@ -20,12 +20,18 @@ export type YooPayment = {
   id: string;
   status: "pending" | "waiting_for_capture" | "succeeded" | "canceled";
   paid: boolean;
+  created_at?: string;
   amount: { value: string; currency: string };
   metadata?: Record<string, string>;
   confirmation?: { type: string; confirmation_url?: string };
 };
 
-type ReceiptExtra = { title: string; kopecks: number; subject: "commodity" | "service" };
+type ReceiptExtra = {
+  title: string;
+  kopecks: number;
+  subject: "commodity" | "service" | "payment";
+  mode?: "full_prepayment" | "advance";
+};
 
 export async function createPayment(input: {
   orderId: string;
@@ -36,13 +42,18 @@ export async function createPayment(input: {
   phone: string;
   goods: ReceiptItem[];
   extras: ReceiptExtra[];
+  /** Номиналы купленных сертификатов: коды выпускаются после оплаты */
+  certificates?: number[];
 }): Promise<YooPayment> {
   const body: Record<string, unknown> = {
     amount: money(input.amountKopecks),
     capture: true,
     confirmation: { type: "redirect", return_url: input.returnUrl },
     description: input.description.slice(0, 128),
-    metadata: { orderId: input.orderId },
+    metadata: {
+      orderId: input.orderId,
+      ...(input.certificates?.length ? { gc: input.certificates.join(";") } : {}),
+    },
   };
 
   // Чеки по 54-ФЗ передаём, только если в ЮKassa подключена онлайн-касса или «Чеки от ЮKassa».
@@ -64,7 +75,7 @@ export async function createPayment(input: {
           quantity: "1.00",
           amount: money(item.kopecks),
           vat_code: vat,
-          payment_mode: "full_prepayment",
+          payment_mode: item.mode ?? "full_prepayment",
           payment_subject: item.subject,
         })),
       ],

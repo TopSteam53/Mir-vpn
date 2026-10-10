@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CandleArt } from "@/components/CandleArt";
+import { GiftCard } from "@/components/GiftCard";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import { momentsOf, setsOf } from "@/data/products";
@@ -168,14 +169,28 @@ export default function Home() {
         <Reveal>
           <h2 className="font-display text-4xl">В подарок</h2>
           <p className="mt-3 max-w-xl text-muted">
-            Наборы мини-свечей, чтобы подарить целую историю. При оформлении можно добавить подарочную
-            упаковку и открытку с твоим текстом.
+            Наборы мини-свечей, пробники ароматов и сертификат, если не знаешь, какой момент выбрать. К любому заказу
+            можно добавить подарочную упаковку и открытку с твоим текстом.
           </p>
         </Reveal>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {setsOf(current.slug).map((s) => (
             <ProductCard key={s.slug} product={s} />
           ))}
+          <Link
+            href="/gift"
+            className="group flex flex-col rounded-3xl border border-line bg-surface p-4 transition-colors hover:border-amber"
+          >
+            <div className="flex aspect-[4/3] items-center rounded-2xl bg-bg p-4">
+              <div className="w-full transition-transform duration-500 group-hover:-translate-y-1">
+                <GiftCard amount={3000} />
+              </div>
+            </div>
+            <p className="eyebrow mt-4">Электронный</p>
+            <h3 className="mt-1 font-display text-2xl tracking-wide">Подарочный сертификат</h3>
+            <p className="mt-2 flex-1 text-sm text-muted">Придёт получателю письмом в нужный день. Действует год.</p>
+            <p className="mt-3 font-semibold">1 500 · 3 000 · 5 000 ₽</p>
+          </Link>
         </div>
       </section>
 

@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         `Способ: ${RETOUR_METHODS[data.method]}`,
         data.orderNumber ? `Прошлый заказ: ${e(data.orderNumber)}` : "",
         "",
-        `Код после приёмки: npm run retour:code -- ${reward}`,
+        `Код после приёмки: npm run code -- retour ${reward}`,
       ]
         .filter(Boolean)
         .join("\n"),

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { LABEL_TEXT_MAX, LABEL_TITLE_MAX } from "@/data/builder";
+import { GIFT_MESSAGE_MAX, GIFT_NAME_MAX } from "@/data/gift";
 import { MAX_QTY } from "@/lib/pricing";
 
 const phone = z
@@ -30,6 +31,16 @@ export const cartLineSchema = z.object({
   wick: z.enum(["cotton", "wood"]).optional(),
   picks: z.array(z.string().max(80)).max(10).optional(),
   custom: builderSchema.optional(),
+  amount: z.number().int().positive().max(100000).optional(),
+  gift: z
+    .object({
+      to: z.string().max(GIFT_NAME_MAX),
+      from: z.string().max(GIFT_NAME_MAX),
+      email: z.string().max(120),
+      message: z.string().max(GIFT_MESSAGE_MAX),
+      date: z.string().max(10),
+    })
+    .optional(),
   qty: z.number().int().min(1).max(MAX_QTY),
 });
 
@@ -48,11 +59,8 @@ export const orderSchema = z
     consent: z.literal(true, { error: "Нужно согласие на обработку персональных данных" }),
     items: z.array(cartLineSchema).min(1, "Корзина пуста").max(30),
     website: z.string().max(0).optional(), // ловушка для ботов, у людей поле скрыто
-  })
-  .refine((o) => o.shipping === "pickup" || (o.city.length > 1 && o.address.length > 3), {
-    message: "Укажите город и адрес или пункт выдачи",
-    path: ["address"],
   });
+// Адрес проверяется в обработчике заказа: он не нужен, если в заказе только сертификаты.
 
 export type OrderInput = z.infer<typeof orderSchema>;
 

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { GIFT_WRAP_PRICE, shippingOptions, type ShippingId } from "@/data/site";
-import { useCart } from "@/lib/cart-store";
+import { cart, useCart } from "@/lib/cart-store";
 import { reachGoal } from "@/lib/metrika";
 import { computeTotals, formatRub, priceLine, type PricedLine, type Promo } from "@/lib/pricing";
 
@@ -23,6 +23,7 @@ export function CheckoutForm() {
   const valid = priced.filter((p): p is PricedLine => typeof p !== "string");
   const totals = computeTotals(valid, shipping, giftWrap, promo);
   const option = shippingOptions.find((o) => o.id === shipping)!;
+  const physical = totals.goods > 0;
 
   if (lines.length === 0) {
     return (
@@ -70,7 +71,7 @@ export function CheckoutForm() {
           city: text("city"),
           address: text("address"),
           comment: text("comment"),
-          giftWrap,
+          giftWrap: physical && giftWrap,
           cardText: giftWrap ? text("cardText") : "",
           promoCode: promo?.code ?? "",
           consent: form.get("consent") === "on",
@@ -87,6 +88,7 @@ export function CheckoutForm() {
       if (data.payUrl) {
         window.location.assign(data.payUrl);
       } else {
+        cart.clear();
         router.push(`/checkout/success?order=${encodeURIComponent(data.orderId)}&manual=1`);
       }
     } catch {
@@ -117,61 +119,69 @@ export function CheckoutForm() {
           </div>
         </fieldset>
 
-        <fieldset className="space-y-4">
-          <legend className="font-display text-2xl">Доставка</legend>
-          <div className="grid gap-2" role="radiogroup">
-            {shippingOptions.map((o) => (
-              <label
-                key={o.id}
-                className="flex cursor-pointer items-start gap-3 rounded-2xl border border-line p-4 has-[:checked]:border-amber"
-              >
-                <input
-                  type="radio"
-                  name="shipping"
-                  value={o.id}
-                  checked={shipping === o.id}
-                  onChange={() => setShipping(o.id)}
-                  className="mt-1 accent-[var(--amber)]"
-                />
-                <span className="flex-1">
-                  <span className="block font-semibold">{o.label}</span>
-                  <span className="block text-sm text-muted">
-                    {o.hint}
-                    {o.freeFrom ? ` · бесплатно от ${formatRub(o.freeFrom)}` : ""}
+        {physical ? (
+          <fieldset className="space-y-4">
+            <legend className="font-display text-2xl">Доставка</legend>
+            <div className="grid gap-2" role="radiogroup">
+              {shippingOptions.map((o) => (
+                <label
+                  key={o.id}
+                  className="flex cursor-pointer items-start gap-3 rounded-2xl border border-line p-4 has-[:checked]:border-amber"
+                >
+                  <input
+                    type="radio"
+                    name="shipping"
+                    value={o.id}
+                    checked={shipping === o.id}
+                    onChange={() => setShipping(o.id)}
+                    className="mt-1 accent-[var(--amber)]"
+                  />
+                  <span className="flex-1">
+                    <span className="block font-semibold">{o.label}</span>
+                    <span className="block text-sm text-muted">
+                      {o.hint}
+                      {o.freeFrom ? ` · бесплатно от ${formatRub(o.freeFrom)}` : ""}
+                    </span>
                   </span>
-                </span>
-                <span className="font-semibold">{o.price ? formatRub(o.price) : "0 ₽"}</span>
-              </label>
-            ))}
-          </div>
-          {option.needsAddress && (
-            <div className="grid gap-4 sm:grid-cols-[1fr_2fr]">
-              <label className="block">
-                <span className="text-sm text-muted">Город</span>
-                <input name="city" required autoComplete="address-level2" className="field mt-1" />
-              </label>
-              <label className="block">
-                <span className="text-sm text-muted">
-                  {shipping === "cdek_pvz" ? "Адрес пункта СДЭК или «подберите ближайший»" : "Адрес и индекс"}
-                </span>
-                <input name="address" required autoComplete="street-address" className="field mt-1" />
-              </label>
+                  <span className="font-semibold">{o.price ? formatRub(o.price) : "0 ₽"}</span>
+                </label>
+              ))}
             </div>
-          )}
-        </fieldset>
+            {option.needsAddress && (
+              <div className="grid gap-4 sm:grid-cols-[1fr_2fr]">
+                <label className="block">
+                  <span className="text-sm text-muted">Город</span>
+                  <input name="city" required autoComplete="address-level2" className="field mt-1" />
+                </label>
+                <label className="block">
+                  <span className="text-sm text-muted">
+                    {shipping === "cdek_pvz" ? "Адрес пункта СДЭК или «подберите ближайший»" : "Адрес и индекс"}
+                  </span>
+                  <input name="address" required autoComplete="street-address" className="field mt-1" />
+                </label>
+              </div>
+            )}
+          </fieldset>
+        ) : (
+          <p className="rounded-2xl border border-line p-4 text-muted">
+            В заказе только подарочные сертификаты: доставка не нужна, код придёт получателю письмом.
+          </p>
+        )}
 
         <fieldset className="space-y-4">
-          <legend className="font-display text-2xl">В подарок?</legend>
-          <label className="flex cursor-pointer items-center gap-3">
-            <input
-              type="checkbox"
-              checked={giftWrap}
-              onChange={(e) => setGiftWrap(e.target.checked)}
-              className="h-5 w-5 accent-[var(--amber)]"
-            />
-            <span>Подарочная упаковка и открытка (+{formatRub(GIFT_WRAP_PRICE)})</span>
-          </label>
-          {giftWrap && (
+          <legend className="font-display text-2xl">{physical ? "В подарок?" : "Комментарий"}</legend>
+          {physical && (
+            <label className="flex cursor-pointer items-center gap-3">
+              <input
+                type="checkbox"
+                checked={giftWrap}
+                onChange={(e) => setGiftWrap(e.target.checked)}
+                className="h-5 w-5 accent-[var(--amber)]"
+              />
+              <span>Подарочная упаковка и открытка (+{formatRub(GIFT_WRAP_PRICE)})</span>
+            </label>
+          )}
+          {physical && giftWrap && (
             <label className="block">
               <span className="text-sm text-muted">Текст открытки (до 300 символов)</span>
               <textarea name="cardText" maxLength={300} rows={3} className="field mt-1" />
@@ -192,7 +202,9 @@ export function CheckoutForm() {
         <ul className="space-y-2 text-sm">
           {priced.map((p, i) =>
             typeof p === "string" ? (
-              <li key={i} className="text-error">{p}</li>
+              <li key={i} className="text-error">
+                {p}
+              </li>
             ) : (
               <li key={i} className="flex justify-between gap-3">
                 <span>
@@ -207,7 +219,7 @@ export function CheckoutForm() {
 
         <div>
           <label className="text-sm text-muted" htmlFor="promo">
-            Промокод или код Retour
+            Промокод, код Retour или сертификата
           </label>
           <div className="mt-1 flex gap-2">
             <input
@@ -217,7 +229,12 @@ export function CheckoutForm() {
               className="field"
               autoComplete="off"
             />
-            <button type="button" className="btn btn-ghost shrink-0 px-4" onClick={applyPromo} disabled={!promoInput.trim()}>
+            <button
+              type="button"
+              className="btn btn-ghost shrink-0 px-4"
+              onClick={applyPromo}
+              disabled={!promoInput.trim()}
+            >
               Применить
             </button>
           </div>
@@ -245,10 +262,12 @@ export function CheckoutForm() {
               <dd>{formatRub(totals.giftWrap)}</dd>
             </div>
           )}
-          <div className="flex justify-between">
-            <dt>Доставка</dt>
-            <dd>{totals.shipping ? formatRub(totals.shipping) : "бесплатно"}</dd>
-          </div>
+          {physical && (
+            <div className="flex justify-between">
+              <dt>Доставка</dt>
+              <dd>{totals.shipping ? formatRub(totals.shipping) : "бесплатно"}</dd>
+            </div>
+          )}
           <div className="flex justify-between border-t border-line pt-3 text-lg font-semibold">
             <dt>Итого</dt>
             <dd>{formatRub(totals.total)}</dd>
@@ -258,8 +277,15 @@ export function CheckoutForm() {
         <label className="flex gap-3 text-sm text-muted">
           <input type="checkbox" name="consent" required className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--amber)]" />
           <span>
-            Согласен(на) с <Link href="/legal/offer" className="underline">офертой</Link> и даю согласие на обработку
-            персональных данных по <Link href="/legal/privacy" className="underline">политике</Link>.
+            Согласен(на) с{" "}
+            <Link href="/legal/offer" className="underline">
+              офертой
+            </Link>{" "}
+            и даю согласие на обработку персональных данных по{" "}
+            <Link href="/legal/privacy" className="underline">
+              политике
+            </Link>
+            .
           </span>
         </label>
 

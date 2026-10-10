@@ -1,6 +1,6 @@
 import "server-only";
-import type { Promo } from "@/lib/pricing";
-import { verifyRetourCode } from "@/lib/retour";
+import { verifyCode } from "@/lib/codes";
+import { formatRub, type Promo } from "@/lib/pricing";
 
 // Общие промокоды. Меняются здесь, без базы данных.
 const STATIC_PROMOS: Record<string, { value: number; label: string }> = {
@@ -18,17 +18,25 @@ export function resolvePromo(raw: string | undefined | null): PromoResult | null
     return { ok: true, promo: { code, kind: "percent", value: fixed.value, label: fixed.label } };
   }
 
-  if (code.startsWith("RT-")) {
-    const check = verifyRetourCode(code, process.env.RETOUR_SECRET ?? "");
+  if (/^(RT|GC|PB)-/.test(code)) {
+    const check = verifyCode(code, process.env.RETOUR_SECRET ?? "");
     if (!check.ok) return check;
+    const amount = formatRub(check.amount);
+    if (check.kind === "GC") {
+      return {
+        ok: true,
+        promo: {
+          code,
+          kind: "certificate",
+          value: check.amount,
+          label: `Сертификат на ${amount}: оплачивает товары, остаток пришлём новым кодом`,
+        },
+      };
+    }
+    const name = check.kind === "RT" ? "Retour" : "Скидка за пробники";
     return {
       ok: true,
-      promo: {
-        code,
-        kind: "retour",
-        value: check.amount,
-        label: `Retour: −${check.amount} ₽ (не больше 30% от суммы товаров)`,
-      },
+      promo: { code, kind: "fixed", value: check.amount, label: `${name}: −${amount} (не больше 30% от суммы товаров)` },
     };
   }
 

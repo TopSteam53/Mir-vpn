@@ -38,6 +38,17 @@ export async function POST(request: Request) {
   }
   const promo = promoResult?.ok ? promoResult.promo : null;
   const totals = computeTotals(lines, order.shipping, order.giftWrap, promo);
+  const physical = totals.goods > 0;
+  if (physical && order.shipping !== "pickup" && (order.city.length < 2 || order.address.length < 4)) {
+    return Response.json({ error: "Укажите город и адрес или пункт выдачи" }, { status: 400 });
+  }
+  if (promo?.kind === "certificate" && !physical) {
+    return Response.json({ error: "Сертификатом оплачиваются свечи и наборы, а не другие сертификаты" }, { status: 400 });
+  }
+  const goodsLines = lines.filter((l) => !l.certificate);
+  const certLines = lines.filter((l) => l.certificate);
+  const certAmounts = certLines.flatMap((l) => Array<number>(l.qty).fill(l.unitPrice));
+  const certRemainder = promo?.kind === "certificate" ? promo.value - totals.discount : 0;
   const shipping = shippingOptions.find((o) => o.id === order.shipping)!;
   const orderId = newOrderId();
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
@@ -45,7 +56,9 @@ export async function POST(request: Request) {
 
   let payUrl: string | null = null;
   let paymentNote = "оплата онлайн не подключена — связаться с клиентом";
-  if (yookassaEnabled()) {
+  if (totals.total === 0) {
+    paymentNote = "полностью оплачен сертификатом";
+  } else if (yookassaEnabled()) {
     try {
       const payment = await createPayment({
         orderId,
@@ -54,8 +67,17 @@ export async function POST(request: Request) {
         returnUrl: successUrl,
         email: order.email,
         phone: order.phone,
-        goods: allocateReceipt(lines, totals.discount),
+        goods: allocateReceipt(goodsLines, totals.discount),
         extras: [
+          // Продажа сертификата по 54-ФЗ — аванс; уточнить с бухгалтером
+          ...certLines.flatMap((l) =>
+            Array.from({ length: l.qty }, () => ({
+              title: l.title,
+              kopecks: l.unitPrice * 100,
+              subject: "payment" as const,
+              mode: "advance" as const,
+            })),
+          ),
           ...(totals.giftWrap
             ? [{ title: "Подарочная упаковка", kopecks: totals.giftWrap * 100, subject: "commodity" as const }]
             : []),
@@ -63,6 +85,7 @@ export async function POST(request: Request) {
             ? [{ title: `Доставка: ${shipping.label}`, kopecks: totals.shipping * 100, subject: "service" as const }]
             : []),
         ],
+        certificates: certAmounts,
       });
       payUrl = payment.confirmation?.confirmation_url ?? null;
       paymentNote = `ожидает оплаты (ЮKassa ${payment.id})`;
@@ -84,16 +107,26 @@ export async function POST(request: Request) {
         (l) => `• ${e(l.title)} × ${l.qty} = ${formatRub(l.sum)}${l.details ? `\n   ${e(l.details)}` : ""}`,
       ),
       "",
-      `Товары: ${formatRub(totals.subtotal)}`,
-      promo ? `Промокод ${e(promo.code)}: −${formatRub(totals.discount)}` : "",
+      `Сумма: ${formatRub(totals.subtotal)}`,
+      promo ? `Код ${e(promo.code)}: −${formatRub(totals.discount)}` : "",
       totals.giftWrap ? `Подарочная упаковка: ${formatRub(totals.giftWrap)}` : "",
-      `Доставка (${e(shipping.label)}): ${formatRub(totals.shipping)}`,
+      physical ? `Доставка (${e(shipping.label)}): ${formatRub(totals.shipping)}` : "",
       `<b>Итого: ${formatRub(totals.total)}</b>`,
       "",
       `👤 ${e(order.name)}, ${e(order.phone)}, ${e(order.email)}`,
-      order.shipping !== "pickup" ? `📦 ${e(order.city)}, ${e(order.address)}` : "📦 Самовывоз",
-      order.cardText ? `💌 Открытка: ${e(order.cardText)}` : "",
+      !physical
+        ? "📧 Только сертификаты, доставка не нужна"
+        : order.shipping !== "pickup"
+          ? `📦 ${e(order.city)}, ${e(order.address)}`
+          : "📦 Самовывоз",
+      order.cardText && physical ? `💌 Открытка: ${e(order.cardText)}` : "",
       order.comment ? `💬 ${e(order.comment)}` : "",
+      certAmounts.length && !yookassaEnabled()
+        ? `🎁 После оплаты выпустите коды: ${certAmounts.map((a) => `npm run code -- gift ${a}`).join("; ")}`
+        : "",
+      certRemainder > 0
+        ? `🎁 Остаток по сертификату ${formatRub(certRemainder)} — выпустите новый код: npm run code -- gift ${certRemainder}`
+        : "",
     ]
       .filter((line, i, all) => line !== "" || all[i - 1] !== "")
       .join("\n"),

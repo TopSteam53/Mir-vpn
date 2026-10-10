@@ -8,6 +8,8 @@ import { getStory } from "@/data/stories";
 const FREE_FROM = shippingOptions.find((o) => o.id === "cdek_pvz")?.freeFrom ?? null;
 import { BuilderPreview } from "@/components/BuilderPreview";
 import { CandleArt } from "@/components/CandleArt";
+import { GiftCard } from "@/components/GiftCard";
+import { GIFT_SLUG } from "@/data/gift";
 import { cart, useCart } from "@/lib/cart-store";
 import { CUSTOM_SLUG, formatRub, lineKey, MAX_QTY, priceLine } from "@/lib/pricing";
 
@@ -15,6 +17,11 @@ export function CartView() {
   const lines = useCart();
   const rows = lines.map((line) => ({ line, key: lineKey(line), priced: priceLine(line) }));
   const subtotal = rows.reduce((s, r) => s + (typeof r.priced === "string" ? 0 : r.priced.sum), 0);
+  // Сертификаты не доставляются, поэтому порог бесплатной доставки считаем только по товарам
+  const goods = rows.reduce(
+    (s, r) => s + (typeof r.priced === "string" || r.priced.certificate ? 0 : r.priced.sum),
+    0,
+  );
   const hasErrors = rows.some((r) => typeof r.priced === "string");
 
   if (lines.length === 0) {
@@ -37,7 +44,11 @@ export function CartView() {
           return (
             <li key={key} className="flex gap-4 py-5">
               <div className="flex h-24 w-20 shrink-0 items-center justify-center rounded-2xl bg-surface">
-                {line.custom ? (
+                {line.slug === GIFT_SLUG ? (
+                  <div className="w-20">
+                    <GiftCard amount={line.amount ?? 0} compact />
+                  </div>
+                ) : line.custom ? (
                   <div className="h-20 w-20">
                     <BuilderPreview config={line.custom} />
                   </div>
@@ -53,8 +64,11 @@ export function CartView() {
               <div className="flex flex-1 flex-col gap-2">
                 {typeof priced === "string" ? (
                   <p className="text-error">{priced}</p>
-                ) : line.slug === CUSTOM_SLUG ? (
-                  <Link href="/builder" className="font-semibold hover:text-amber-strong">
+                ) : line.slug === CUSTOM_SLUG || line.slug === GIFT_SLUG ? (
+                  <Link
+                    href={line.slug === GIFT_SLUG ? "/gift" : "/builder"}
+                    className="font-semibold hover:text-amber-strong"
+                  >
                     {priced.title}
                   </Link>
                 ) : (
@@ -107,15 +121,15 @@ export function CartView() {
           <span>Товары</span>
           <span className="font-semibold">{formatRub(subtotal)}</span>
         </div>
-        {FREE_FROM !== null && subtotal > 0 && (
+        {FREE_FROM !== null && goods > 0 && (
           <div className="mt-4">
             <p className="text-sm">
-              {subtotal >= FREE_FROM
+              {goods >= FREE_FROM
                 ? "Доставка до пункта СДЭК — бесплатно"
-                : `До бесплатной доставки в пункт СДЭК — ${formatRub(FREE_FROM - subtotal)}`}
+                : `До бесплатной доставки в пункт СДЭК — ${formatRub(FREE_FROM - goods)}`}
             </p>
             <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line" aria-hidden="true">
-              <div className="h-full rounded-full bg-amber" style={{ width: `${Math.min(100, (subtotal / FREE_FROM) * 100)}%` }} />
+              <div className="h-full rounded-full bg-amber" style={{ width: `${Math.min(100, (goods / FREE_FROM) * 100)}%` }} />
             </div>
           </div>
         )}

@@ -43,11 +43,11 @@ describe("computeTotals", () => {
       value: 10,
       label: "",
     });
-    expect(t).toEqual({ subtotal: 2780, discount: 278, giftWrap: 390, shipping: 390, total: 3282 });
+    expect(t).toEqual({ goods: 2780, subtotal: 2780, discount: 278, giftWrap: 390, shipping: 390, total: 3282 });
   });
 
   it("caps a Retour discount at 30% of goods", () => {
-    const t = computeTotals([line(590)], "pickup", false, { code: "RT", kind: "retour", value: 450, label: "" });
+    const t = computeTotals([line(590)], "pickup", false, { code: "RT", kind: "fixed", value: 450, label: "" });
     expect(t.discount).toBe(177);
     expect(t.total).toBe(413);
   });
@@ -92,5 +92,50 @@ describe("wick choice", () => {
       lineKey({ slug: "cedra", variant: "200", wick: "cotton" }),
     );
     expect(lineKey({ slug: "cedra", variant: "200", wick: "cotton" })).toBe(lineKey({ slug: "cedra", variant: "200" }));
+  });
+});
+
+describe("gift certificates", () => {
+  const gift = { to: "Аня", from: "Миша", email: "anya@example.ru", message: "С Новым годом!", date: "2099-01-01" };
+  const today = new Date().toISOString().slice(0, 10);
+
+  it("prices a certificate as a non-goods line", () => {
+    const priced = priceLine({ slug: "gift-certificate", amount: 3000, gift: { ...gift, date: today }, qty: 1 });
+    expect(priced).toMatchObject({ certificate: true, sum: 3000 });
+    expect(typeof priced !== "string" && priced.title).toMatch(/^Подарочный сертификат на 3\s000 ₽$/);
+  });
+
+  it("rejects odd amounts, bad e-mails and dates out of range", () => {
+    expect(priceLine({ slug: "gift-certificate", amount: 2000, gift: { ...gift, date: today }, qty: 1 })).toBeTypeOf("string");
+    expect(
+      priceLine({ slug: "gift-certificate", amount: 3000, gift: { ...gift, email: "nope", date: today }, qty: 1 }),
+    ).toBeTypeOf("string");
+    expect(priceLine({ slug: "gift-certificate", amount: 3000, gift, qty: 1 })).toBeTypeOf("string");
+    expect(priceLine({ slug: "gift-certificate", amount: 3000, qty: 1 })).toBeTypeOf("string");
+  });
+
+  it("keeps certificates out of discounts and shipping", () => {
+    const cert = { title: "c", unitPrice: 3000, qty: 1, sum: 3000, certificate: true };
+    const percent = { code: "W", kind: "percent", value: 10, label: "" } as const;
+    expect(computeTotals([cert], "cdek_pvz", true, percent)).toEqual({
+      goods: 0,
+      subtotal: 3000,
+      discount: 0,
+      giftWrap: 0,
+      shipping: 0,
+      total: 3000,
+    });
+  });
+
+  it("pays goods with a certificate but keeps free shipping and charges delivery", () => {
+    const gc = { code: "GC", kind: "certificate", value: 3000, label: "" } as const;
+    expect(computeTotals([line(2780)], "cdek_pvz", false, gc)).toMatchObject({ discount: 2780, shipping: 390, total: 390 });
+    expect(computeTotals([line(5560)], "cdek_pvz", false, gc)).toMatchObject({ discount: 3000, shipping: 0, total: 2560 });
+  });
+});
+
+describe("samples set", () => {
+  it("is sold as a regular set", () => {
+    expect(priceLine({ slug: "probniki-dekabr", qty: 2 })).toMatchObject({ sum: 780 });
   });
 });

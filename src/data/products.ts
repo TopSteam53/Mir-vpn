@@ -47,6 +47,8 @@ export type SetProduct = {
   description: string;
   /** Сколько мини-свечей нужно выбрать; 0 — состав фиксированный (все моменты истории) */
   picks: number;
+  /** samples — набор восковых пробников ароматов, а не свечи */
+  format?: "candles" | "samples";
   price: number;
 };
 
@@ -184,6 +186,17 @@ export const sets: SetProduct[] = [
     description: "Три мини-свечи на твой выбор, чтобы познакомиться с историей.",
     picks: 3,
     price: 1490,
+  },
+  {
+    kind: "set",
+    slug: "probniki-dekabr",
+    storySlug: DEC,
+    name: "Пробники: Тот самый декабрь",
+    description:
+      "Пять восковых таблеток с ароматами № 101–105. Понюхай, выбери свой момент — и получи 390 ₽ скидки на первую свечу 200 или 400 мл: промокод внутри набора.",
+    picks: 0,
+    price: 390,
+    format: "samples",
   },
 ];
 
