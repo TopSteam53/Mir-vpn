@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CandleArt } from "@/components/CandleArt";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
+import { WaitlistForm } from "@/components/WaitlistForm";
 import { momentNumber, momentsOf, setsOf } from "@/data/products";
 import { site } from "@/data/site";
 import { getStory, stories } from "@/data/stories";
@@ -108,10 +109,17 @@ export default async function StoryPage({ params }: PageProps<"/stories/[slug]">
         ) : (
           <div className="rounded-3xl border border-line p-8 text-center">
             <h2 className="font-display text-3xl">Выход истории: {story.release}</h2>
-            <p className="mt-3 text-muted">Подпишись, чтобы узнать о старте предзаказа первым.</p>
-            <a href={site.contacts.telegram} className="btn btn-primary mt-6">
-              Telegram-канал AMBRE&apos;
-            </a>
+            <p className="mt-3 text-muted">Оставь контакт — сообщим о старте предзаказа первым.</p>
+            <div className="mx-auto mt-6 max-w-md">
+              <WaitlistForm story={story.slug} />
+            </div>
+            <p className="mt-6 text-sm text-muted">
+              Или следи за новостями в{" "}
+              <a href={site.contacts.telegram} className="text-amber-strong underline">
+                Telegram-канале
+              </a>
+              .
+            </p>
           </div>
         )}
       </section>

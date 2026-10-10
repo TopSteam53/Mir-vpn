@@ -1,4 +1,5 @@
 import { retourRewards } from "@/data/site";
+import { getStory } from "@/data/stories";
 import { firstIssue, requestSchema } from "@/lib/schemas";
 import { escapeHtml as e, notifyOwner } from "@/lib/telegram";
 
@@ -16,6 +17,15 @@ export async function POST(request: Request) {
     return Response.json({ error: firstIssue(parsed.error) }, { status: 400 });
   }
   const data = parsed.data;
+
+  if (data.type === "waitlist") {
+    const story = getStory(data.story);
+    if (!story || story.status !== "soon") {
+      return Response.json({ error: "Эта история уже в продаже или не найдена" }, { status: 400 });
+    }
+    await notifyOwner(`<b>Лист ожидания</b>: «${e(story.title)}» — ${e(data.contact)}`);
+    return Response.json({ ok: true });
+  }
 
   if (data.type === "retour") {
     const jars = data.mini + data.medium + data.large;

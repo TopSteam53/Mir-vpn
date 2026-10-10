@@ -5,7 +5,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import { reachGoal } from "@/lib/metrika";
 
 type Props = {
-  type: "retour" | "corporate";
+  type: "retour" | "corporate" | "waitlist";
   submitLabel: string;
   successText: string;
   /** Собирает данные формы в тело запроса */

@@ -86,7 +86,9 @@ export function priceLine(line: CartLine): PricedLine | string {
     if (wick.id === "wood" && variant.id === "mini") return "Деревянный фитиль не подходит для мини-свечи";
     const unitPrice = variant.price + wick.price;
     return {
-      title: `№ ${product.code} ${product.name}, ${variant.label}${wick.id === "wood" ? ", деревянный фитиль" : ""}`,
+      title: `№ ${product.code} ${product.name}, ${variant.label}${
+        wick.id === "wood" ? (variant.id === "400" ? ", фитили деревянные" : ", деревянный фитиль") : ""
+      }`,
       unitPrice,
       qty: line.qty,
       sum: unitPrice * line.qty,

@@ -70,6 +70,13 @@ export const requestSchema = z.discriminatedUnion("type", [
     website: z.string().max(0).optional(),
   }),
   z.object({
+    type: z.literal("waitlist"),
+    story: z.string().max(80),
+    contact: z.string().trim().min(5, "Укажите e-mail, телефон или Telegram").max(120),
+    consent: z.literal(true, { error: "Нужно согласие на обработку персональных данных" }),
+    website: z.string().max(0).optional(),
+  }),
+  z.object({
     type: z.literal("corporate"),
     name: z.string().trim().min(2, "Укажите имя").max(100),
     company: z.string().trim().max(150).default(""),

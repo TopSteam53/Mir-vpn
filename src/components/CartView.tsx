@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { getProduct } from "@/data/products";
+import { shippingOptions } from "@/data/site";
 import { getStory } from "@/data/stories";
+
+const FREE_FROM = shippingOptions.find((o) => o.id === "cdek_pvz")?.freeFrom ?? null;
 import { BuilderPreview } from "@/components/BuilderPreview";
 import { CandleArt } from "@/components/CandleArt";
 import { cart, useCart } from "@/lib/cart-store";
@@ -104,7 +107,19 @@ export function CartView() {
           <span>Товары</span>
           <span className="font-semibold">{formatRub(subtotal)}</span>
         </div>
-        <p className="mt-2 text-sm text-muted">
+        {FREE_FROM !== null && subtotal > 0 && (
+          <div className="mt-4">
+            <p className="text-sm">
+              {subtotal >= FREE_FROM
+                ? "Доставка до пункта СДЭК — бесплатно"
+                : `До бесплатной доставки в пункт СДЭК — ${formatRub(FREE_FROM - subtotal)}`}
+            </p>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line" aria-hidden="true">
+              <div className="h-full rounded-full bg-amber" style={{ width: `${Math.min(100, (subtotal / FREE_FROM) * 100)}%` }} />
+            </div>
+          </div>
+        )}
+        <p className="mt-3 text-sm text-muted">
           Доставка, промокод и подарочная упаковка — на следующем шаге.
         </p>
         {hasErrors && (
