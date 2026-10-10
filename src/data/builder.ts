@@ -82,5 +82,5 @@ export const CUSTOM_BLEND_PRICE = 200;
 export const LABEL_TITLE_MAX = 24;
 export const LABEL_TEXT_MAX = 60;
 
-/** Сколько дней на изготовление: заливка и созревание воска. */
-export const BUILDER_LEAD_DAYS = "5–7";
+/** Сколько дней на изготовление: соевому воску нужно 7–14 дней созревания после заливки. */
+export const BUILDER_LEAD_DAYS = "10–14";

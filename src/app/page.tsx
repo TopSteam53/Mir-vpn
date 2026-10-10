@@ -102,7 +102,7 @@ export default function Home() {
             <h2 className="mt-3 font-display text-4xl">Собери свою свечу</h2>
             <p className="mt-4 max-w-xl text-muted">
               Выбери банку, собери аромат из нот, цвет воска и фитиль, а на этикетке напиши свой момент: «Наш первый
-              отпуск», дату или имя. Сварим вручную за 5–7 дней.
+              отпуск», дату или имя. Сварим вручную за 10–14 дней: воску нужно созреть.
             </p>
             <Link href="/builder" className="btn btn-primary mt-6">
               Собрать свечу
