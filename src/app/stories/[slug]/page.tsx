@@ -55,7 +55,7 @@ export default async function StoryPage({ params }: PageProps<"/stories/[slug]">
               >
                 <div className="relative mx-auto w-full max-w-xs">
                   <div className="glow absolute -inset-8" aria-hidden="true" />
-                  <CandleArt color={story.color} code={m.code} name={m.name} lit={available} className="relative w-full" />
+                  <CandleArt color={story.color} code={m.code} name={m.name} caption={m.title.toLowerCase()} lit={available} className="relative w-full" />
                 </div>
                 <div>
                   <p className="font-display text-6xl" style={{ color: story.color }}>

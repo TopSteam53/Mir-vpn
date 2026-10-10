@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCart } from "@/components/AddToCart";
 import { CandleArt } from "@/components/CandleArt";
+import { CandleAssembly } from "@/components/CandleAssembly";
 import {
   familyLabels,
   getProduct,
@@ -94,11 +95,11 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
         <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[2rem] border border-line bg-surface md:sticky md:top-24">
           <div className="glow absolute inset-0" aria-hidden="true" />
           {isMoment ? (
-            <CandleArt color={story.color} code={product.code} name={product.name} lit={available} className="relative h-4/5" />
+            <CandleArt color={story.color} code={product.code} name={product.name} caption={product.title.toLowerCase()} lit={available} className="relative h-4/5" />
           ) : (
             <div className="relative flex items-end gap-2">
               {storyMoments.slice(0, product.picks || 5).map((m) => (
-                <CandleArt key={m.slug} color={story.color} code={m.code} className="h-28 sm:h-36" />
+                <CandleArt key={m.slug} color={story.color} code={m.code} name={m.name} className="h-28 sm:h-36" />
               ))}
             </div>
           )}
@@ -219,6 +220,32 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
           )}
         </div>
       </div>
+
+      {isMoment && (
+        <section className="mt-20 grid items-center gap-10 border-t border-line pt-16 md:grid-cols-2" aria-labelledby="assembly">
+          <div>
+            <p className="eyebrow">Из чего собрана</p>
+            <h2 id="assembly" className="mt-3 font-display text-4xl">
+              {product.name} в разборе
+            </h2>
+            <p className="mt-4 text-muted">
+              Растительный воск, хлопковый фитиль, стеклянная банка и бумажная этикетка с номером момента. На дне —
+              отметка Retour: когда свеча догорит, банку можно вернуть и получить скидку.
+            </p>
+          </div>
+          <CandleAssembly
+            accent={story.color}
+            name={product.name}
+            code={momentNumber(product.code)}
+            caption={product.title.toLowerCase()}
+            lid="bamboo"
+            wicks={1}
+            notes={product.notes}
+            className="mx-auto w-full max-w-md text-ink"
+            title={`Свеча ${product.name} в разборе`}
+          />
+        </section>
+      )}
     </div>
   );
 }

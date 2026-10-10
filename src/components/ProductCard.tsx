@@ -23,6 +23,7 @@ export function ProductCard({ product }: { product: Product }) {
             color={story.color}
             code={product.code}
             name={product.name}
+            caption={product.title.toLowerCase()}
             lit={available}
             className="relative h-4/5 transition-transform duration-500 group-hover:-translate-y-1"
           />

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { CandleBuilder } from "@/components/CandleBuilder";
 import { moments } from "@/data/products";
-import { builderNotes } from "@/data/builder";
 import { stories } from "@/data/stories";
 
 export const metadata: Metadata = {
@@ -9,13 +8,6 @@ export const metadata: Metadata = {
   description:
     "Конструктор свечи AMBRE': выбери банку, аромат из нот, воск, фитиль и напиши своё название на этикетке.",
 };
-
-// Ноты готовых ароматов, которые есть в палитре конструктора, — для цветных точек на этикетке
-function noteIdsFor(labels: string[]): string[] {
-  return labels
-    .map((label) => builderNotes.find((n) => label.toLowerCase().includes(n.label.toLowerCase()))?.id)
-    .filter((id): id is string => Boolean(id));
-}
 
 export default function BuilderPage() {
   const onSale = new Set(stories.filter((s) => s.status === "available").map((s) => s.slug));
@@ -25,7 +17,6 @@ export default function BuilderPage() {
       slug: m.slug,
       name: `№ ${m.code} ${m.name} · ${m.title.toLowerCase()}`,
       notes: [m.notes.top, m.notes.heart, m.notes.base].join(" · "),
-      noteIds: noteIdsFor([m.notes.top, m.notes.heart, m.notes.base]),
     }));
 
   return (

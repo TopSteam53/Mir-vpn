@@ -29,7 +29,7 @@ import { cart } from "@/lib/cart-store";
 import { reachGoal } from "@/lib/metrika";
 import { CUSTOM_SLUG, formatRub } from "@/lib/pricing";
 
-type ScentOption = { slug: string; name: string; notes: string; noteIds: string[] };
+type ScentOption = { slug: string; name: string; notes: string };
 
 function Step({ n, title, hint, children }: { n: number; title: string; hint?: string; children: ReactNode }) {
   return (
@@ -96,10 +96,6 @@ export function CandleBuilder({ scents }: { scents: ScentOption[] }) {
 
   const price = builderPrice(config);
   const error = builderError(config);
-  const scent = config.scent ? scents.find((s) => s.slug === config.scent) : null;
-  const noteIds = scent
-    ? scent.noteIds
-    : noteLevels.map((l) => config.notes[l.id]).filter((n): n is string => Boolean(n));
 
   function add() {
     if (error) {
@@ -306,7 +302,7 @@ export function CandleBuilder({ scents }: { scents: ScentOption[] }) {
           <div className="relative mx-auto aspect-[240/290] max-h-[45vh] w-full overflow-hidden rounded-[2rem] bg-resin lg:max-h-[60vh]">
             <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_35%,rgb(233_182_92/0.25),transparent_70%)]" aria-hidden="true" />
             <div className="relative h-full p-4">
-              <BuilderPreview config={config} noteIds={noteIds} />
+              <BuilderPreview config={config} />
             </div>
           </div>
 

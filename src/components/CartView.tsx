@@ -36,12 +36,7 @@ export function CartView() {
               <div className="flex h-24 w-20 shrink-0 items-center justify-center rounded-2xl bg-surface">
                 {line.custom ? (
                   <div className="h-20 w-20">
-                    <BuilderPreview
-                      config={line.custom}
-                      noteIds={[line.custom.notes.top, line.custom.notes.heart, line.custom.notes.base].filter(
-                        (n): n is string => Boolean(n),
-                      )}
-                    />
+                    <BuilderPreview config={line.custom} />
                   </div>
                 ) : (
                   <CandleArt

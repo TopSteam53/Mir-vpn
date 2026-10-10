@@ -7,6 +7,7 @@ import { retourRewards, site } from "@/data/site";
 import { stories } from "@/data/stories";
 
 const current = stories.find((s) => s.status === "available")!;
+const hero = momentsOf(current.slug)[1];
 
 const FEATURES = [
   { title: "Растительный воск", text: "Соевый и кокосовый воск горит чисто и ровно, без копоти." },
@@ -40,7 +41,13 @@ export default function Home() {
           </div>
           <div className="relative mx-auto w-full max-w-sm">
             <div className="glow absolute -inset-10" aria-hidden="true" />
-            <CandleArt color={current.color} code={momentsOf(current.slug)[1].code} name={momentsOf(current.slug)[1].name} className="relative w-full" />
+            <CandleArt
+              color={current.color}
+              code={hero.code}
+              name={hero.name}
+              caption={hero.title.toLowerCase()}
+              className="relative w-full"
+            />
           </div>
         </div>
       </section>
