@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { CandleArt } from "@/components/CandleArt";
+import { MomentPhoto } from "@/components/MomentPhoto";
+import { momentPhoto } from "@/data/photos";
 import { minPrice, momentNumber, type Product } from "@/data/products";
 import { getStory } from "@/data/stories";
 import { formatRub } from "@/lib/pricing";
@@ -8,6 +10,7 @@ export function ProductCard({ product }: { product: Product }) {
   const story = getStory(product.storySlug)!;
   const available = story.status === "available";
   const isMoment = product.kind === "moment";
+  const photo = isMoment ? momentPhoto(product.slug) : undefined;
 
   return (
     <Link
@@ -17,8 +20,14 @@ export function ProductCard({ product }: { product: Product }) {
       <div
         className={`relative flex items-center justify-center overflow-hidden rounded-2xl bg-bg ${isMoment ? "aspect-square" : "aspect-[4/3]"}`}
       >
-        <div className="glow absolute inset-0" aria-hidden="true" />
-        {isMoment ? (
+        {!photo && <div className="glow absolute inset-0" aria-hidden="true" />}
+        {photo ? (
+          <MomentPhoto
+            photo={photo}
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+        ) : isMoment ? (
           <CandleArt
             color={story.color}
             code={product.code}

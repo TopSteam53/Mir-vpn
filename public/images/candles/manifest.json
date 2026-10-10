@@ -1,0 +1,54 @@
+{
+  "note": "Фотореалистичные 3D-рендеры (Blender Cycles) до реальной фотосъёмки. Пэкшоты: сливочный фон #F6F0E6, одна камера.",
+  "images": [
+    {
+      "file": "101-inej.webp",
+      "src": "/images/candles/101-inej.webp",
+      "width": 1600,
+      "height": 1600,
+      "alt": "Свеча AMBRE' № 101 «Иней» — каток в парке: янтарная банка 200 мл, горит, на сливочном фоне"
+    },
+    {
+      "file": "102-cedra.webp",
+      "src": "/images/candles/102-cedra.webp",
+      "width": 1600,
+      "height": 1600,
+      "alt": "Свеча AMBRE' № 102 «Цедра» — мандарин в кармане: янтарная банка 200 мл, горит, на сливочном фоне"
+    },
+    {
+      "file": "103-smola.webp",
+      "src": "/images/candles/103-smola.webp",
+      "width": 1600,
+      "height": 1600,
+      "alt": "Свеча AMBRE' № 103 «Смола» — ёлка в съёмной квартире: янтарная банка 200 мл, горит, на сливочном фоне"
+    },
+    {
+      "file": "104-iskry.webp",
+      "src": "/images/candles/104-iskry.webp",
+      "width": 1600,
+      "height": 1600,
+      "alt": "Свеча AMBRE' № 104 «Искры» — бенгальские огни: янтарная банка 200 мл, горит, на сливочном фоне"
+    },
+    {
+      "file": "105-pled.webp",
+      "src": "/images/candles/105-pled.webp",
+      "width": 1600,
+      "height": 1600,
+      "alt": "Свеча AMBRE' № 105 «Плед» — первое утро января: янтарная банка 200 мл, горит, на сливочном фоне"
+    },
+    {
+      "file": "102-cedra-unlit.webp",
+      "src": "/images/candles/102-cedra-unlit.webp",
+      "width": 1600,
+      "height": 1600,
+      "alt": "Свеча AMBRE' № 102 «Цедра» с бамбуковой крышкой, не зажжена"
+    },
+    {
+      "file": "builder/jar-amber.webp",
+      "src": "/images/candles/builder/jar-amber.webp",
+      "width": 1600,
+      "height": 1600,
+      "alt": "Свеча 200 мл в янтарной банке с пустой этикеткой, горит"
+    }
+  ]
+}

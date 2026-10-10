@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCart } from "@/components/AddToCart";
 import { CandleArt } from "@/components/CandleArt";
+import { MomentPhoto } from "@/components/MomentPhoto";
+import { momentPhoto } from "@/data/photos";
 import { CandleAssembly } from "@/components/CandleAssembly";
 import {
   familyLabels,
@@ -93,8 +95,12 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
 
       <div className="mt-6 grid gap-10 md:grid-cols-2">
         <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[2rem] border border-line bg-surface md:sticky md:top-24">
-          <div className="glow absolute inset-0" aria-hidden="true" />
-          {isMoment ? (
+          {isMoment && momentPhoto(product.slug) ? (
+            <MomentPhoto photo={momentPhoto(product.slug)!} sizes="(min-width: 768px) 50vw, 100vw" preload />
+          ) : (
+            <div className="glow absolute inset-0" aria-hidden="true" />
+          )}
+          {isMoment && momentPhoto(product.slug) ? null : isMoment ? (
             <CandleArt color={story.color} code={product.code} name={product.name} caption={product.title.toLowerCase()} lit={available} className="relative h-4/5" />
           ) : (
             <div className="relative flex items-end gap-2">

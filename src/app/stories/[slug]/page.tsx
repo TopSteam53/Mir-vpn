@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CandleArt } from "@/components/CandleArt";
+import { MomentPhoto } from "@/components/MomentPhoto";
+import { momentPhoto } from "@/data/photos";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import { WaitlistForm } from "@/components/WaitlistForm";
@@ -54,10 +56,16 @@ export default async function StoryPage({ params }: PageProps<"/stories/[slug]">
               <Reveal
                 className={`grid items-center gap-8 md:grid-cols-2 ${i % 2 ? "md:[&>*:first-child]:order-2" : ""}`}
               >
-                <div className="relative mx-auto w-full max-w-xs">
-                  <div className="glow absolute -inset-8" aria-hidden="true" />
-                  <CandleArt color={story.color} code={m.code} name={m.name} caption={m.title.toLowerCase()} lit={available} className="relative w-full" />
-                </div>
+                {momentPhoto(m.slug) ? (
+                  <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-[2rem] border border-line">
+                    <MomentPhoto photo={momentPhoto(m.slug)!} sizes="(min-width: 768px) 384px, 100vw" />
+                  </div>
+                ) : (
+                  <div className="relative mx-auto w-full max-w-xs">
+                    <div className="glow absolute -inset-8" aria-hidden="true" />
+                    <CandleArt color={story.color} code={m.code} name={m.name} caption={m.title.toLowerCase()} lit={available} className="relative w-full" />
+                  </div>
+                )}
                 <div>
                   <p className="font-display text-6xl" style={{ color: story.color }}>
                     {momentNumber(m.code)}

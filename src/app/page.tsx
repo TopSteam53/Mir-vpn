@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { CandleArt } from "@/components/CandleArt";
+import { MomentPhoto } from "@/components/MomentPhoto";
+import { momentPhoto } from "@/data/photos";
 import { GiftCard } from "@/components/GiftCard";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
@@ -40,16 +42,22 @@ export default function Home() {
               </Link>
             </div>
           </div>
-          <div className="relative mx-auto w-full max-w-sm">
-            <div className="glow absolute -inset-10" aria-hidden="true" />
-            <CandleArt
-              color={current.color}
-              code={hero.code}
-              name={hero.name}
-              caption={hero.title.toLowerCase()}
-              className="relative w-full"
-            />
-          </div>
+          {momentPhoto(hero.slug) ? (
+            <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-[2rem] border border-line shadow-xl">
+              <MomentPhoto photo={momentPhoto(hero.slug)!} sizes="(min-width: 768px) 448px, 100vw" preload />
+            </div>
+          ) : (
+            <div className="relative mx-auto w-full max-w-sm">
+              <div className="glow absolute -inset-10" aria-hidden="true" />
+              <CandleArt
+                color={current.color}
+                code={hero.code}
+                name={hero.name}
+                caption={hero.title.toLowerCase()}
+                className="relative w-full"
+              />
+            </div>
+          )}
         </div>
       </section>
 
@@ -108,10 +116,11 @@ export default function Home() {
               Собрать свечу
             </Link>
           </div>
-          <div className="flex items-end justify-center gap-3" aria-hidden="true">
-            <CandleArt color="#6b4eff" className="h-36" />
-            <CandleArt color="#c8862e" className="h-48" />
-            <CandleArt color="#2f9c95" className="h-36" />
+          <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-[2rem] border border-line">
+            <MomentPhoto
+              photo={{ src: "/images/candles/builder/jar-amber.webp", alt: "Свеча в янтарной банке с пустой этикеткой — для вашего момента" }}
+              sizes="(min-width: 768px) 384px, 100vw"
+            />
           </div>
         </Reveal>
       </section>
