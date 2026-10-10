@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { LABEL_TEXT_MAX, LABEL_TITLE_MAX } from "@/data/builder";
 import { MAX_QTY } from "@/lib/pricing";
 
 const phone = z
@@ -8,10 +9,26 @@ const phone = z
     message: "Укажите телефон",
   });
 
+const noteId = z.string().max(40).optional();
+
+export const builderSchema = z.object({
+  size: z.enum(["mini", "200", "400"]),
+  jar: z.enum(["amber", "black", "clear", "frost"]),
+  wax: z.enum(["natural", "blush", "sage", "graphite"]),
+  wick: z.enum(["cotton", "wood"]),
+  lid: z.enum(["none", "bamboo", "metal"]),
+  intensity: z.enum(["soft", "medium", "strong"]),
+  scent: z.string().max(80).nullable(),
+  notes: z.object({ top: noteId, heart: noteId, base: noteId }),
+  title: z.string().max(LABEL_TITLE_MAX),
+  text: z.string().max(LABEL_TEXT_MAX),
+});
+
 export const cartLineSchema = z.object({
   slug: z.string().max(80),
   variant: z.enum(["mini", "200", "400"]).optional(),
   picks: z.array(z.string().max(80)).max(10).optional(),
+  custom: builderSchema.optional(),
   qty: z.number().int().min(1).max(MAX_QTY),
 });
 

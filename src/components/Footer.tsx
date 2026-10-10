@@ -7,6 +7,7 @@ const COLUMNS = [
     links: [
       { href: "/stories", label: "Истории" },
       { href: "/catalog", label: "Каталог" },
+      { href: "/builder", label: "Собрать свою свечу" },
       { href: "/retour", label: "Retour — возврат банок" },
       { href: "/corporate", label: "Корпоративные подарки" },
     ],

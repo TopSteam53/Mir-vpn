@@ -80,7 +80,9 @@ export async function POST(request: Request) {
     [
       `<b>Новый заказ ${orderId}</b> — ${paymentNote}`,
       "",
-      ...lines.map((l) => `• ${e(l.title)} × ${l.qty} = ${formatRub(l.sum)}`),
+      ...lines.map(
+        (l) => `• ${e(l.title)} × ${l.qty} = ${formatRub(l.sum)}${l.details ? `\n   ${e(l.details)}` : ""}`,
+      ),
       "",
       `Товары: ${formatRub(totals.subtotal)}`,
       promo ? `Промокод ${e(promo.code)}: −${formatRub(totals.discount)}` : "",

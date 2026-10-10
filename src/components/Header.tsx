@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 const NAV = [
   { href: "/stories", label: "Истории" },
   { href: "/catalog", label: "Каталог" },
+  { href: "/builder", label: "Конструктор" },
   { href: "/retour", label: "Retour" },
   { href: "/corporate", label: "Компаниям" },
   { href: "/about", label: "О нас" },

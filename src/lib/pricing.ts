@@ -1,3 +1,4 @@
+import { builderError, builderPrice, describeBuilder, type BuilderConfig } from "@/lib/builder";
 import { getProduct, type VariantId } from "@/data/products";
 import { getStory } from "@/data/stories";
 import {
@@ -12,11 +13,17 @@ export type CartLine = {
   variant?: VariantId;
   /** Выбранные моменты для набора «Пролог» */
   picks?: string[];
+  /** Конфигурация из конструктора, когда slug = CUSTOM_SLUG */
+  custom?: BuilderConfig;
   qty: number;
 };
 
+export const CUSTOM_SLUG = "custom";
+
 export type PricedLine = {
   title: string;
+  /** Подробности для сборщика: состав своей свечи */
+  details?: string;
   unitPrice: number;
   qty: number;
   sum: number;
@@ -37,11 +44,25 @@ export type Totals = {
 export const MAX_QTY = 20;
 
 export function lineKey(line: Omit<CartLine, "qty">): string {
-  return [line.slug, line.variant ?? "", (line.picks ?? []).join("+")].join("|");
+  return [
+    line.slug,
+    line.variant ?? "",
+    (line.picks ?? []).join("+"),
+    line.custom ? JSON.stringify(line.custom) : "",
+  ].join("|");
 }
 
 /** Проверяет строку корзины по каталогу и считает цену. Возвращает строку ошибки, если товар нельзя купить. */
 export function priceLine(line: CartLine): PricedLine | string {
+  if (line.slug === CUSTOM_SLUG) {
+    if (!Number.isInteger(line.qty) || line.qty < 1 || line.qty > MAX_QTY) return "Неверное количество";
+    if (!line.custom) return "Не хватает настроек своей свечи";
+    const error = builderError(line.custom);
+    if (error) return error;
+    const price = builderPrice(line.custom);
+    return { ...describeBuilder(line.custom), unitPrice: price, qty: line.qty, sum: price * line.qty };
+  }
+
   const product = getProduct(line.slug);
   if (!product) return `Товар не найден: ${line.slug}`;
   if (getStory(product.storySlug)?.status !== "available") {

@@ -86,6 +86,28 @@ export default function Home() {
         </Reveal>
       </section>
 
+      {/* Конструктор */}
+      <section className="mx-auto max-w-6xl px-4 py-12">
+        <Reveal className="grid items-center gap-8 rounded-[2rem] border border-line bg-surface p-8 md:grid-cols-[1fr_auto] md:p-12">
+          <div>
+            <p className="eyebrow">Конструктор</p>
+            <h2 className="mt-3 font-display text-4xl">Собери свою свечу</h2>
+            <p className="mt-4 max-w-xl text-muted">
+              Выбери банку, собери аромат из нот, цвет воска и фитиль, а на этикетке напиши свой момент: «Наш первый
+              отпуск», дату или имя. Сварим вручную за 5–7 дней.
+            </p>
+            <Link href="/builder" className="btn btn-primary mt-6">
+              Собрать свечу
+            </Link>
+          </div>
+          <div className="flex items-end justify-center gap-3" aria-hidden="true">
+            <CandleArt color="#6b4eff" className="h-36" />
+            <CandleArt color="#c8862e" className="h-48" />
+            <CandleArt color="#2f9c95" className="h-36" />
+          </div>
+        </Reveal>
+      </section>
+
       {/* Все истории */}
       <section className="mx-auto max-w-6xl px-4 py-12">
         <Reveal>

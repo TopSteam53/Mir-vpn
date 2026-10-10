@@ -197,6 +197,7 @@ export function CheckoutForm() {
               <li key={i} className="flex justify-between gap-3">
                 <span>
                   {p.title} × {p.qty}
+                  {p.details && <span className="block text-xs text-muted">{p.details}</span>}
                 </span>
                 <span className="shrink-0">{formatRub(p.sum)}</span>
               </li>

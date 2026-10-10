@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { getProduct } from "@/data/products";
 import { getStory } from "@/data/stories";
+import { BuilderPreview } from "@/components/BuilderPreview";
 import { CandleArt } from "@/components/CandleArt";
 import { cart, useCart } from "@/lib/cart-store";
-import { formatRub, lineKey, MAX_QTY, priceLine } from "@/lib/pricing";
+import { CUSTOM_SLUG, formatRub, lineKey, MAX_QTY, priceLine } from "@/lib/pricing";
 
 export function CartView() {
   const lines = useCart();
@@ -33,19 +34,37 @@ export function CartView() {
           return (
             <li key={key} className="flex gap-4 py-5">
               <div className="flex h-24 w-20 shrink-0 items-center justify-center rounded-2xl bg-surface">
-                <CandleArt
-                  color={color}
-                  number={product?.kind === "moment" ? product.number : undefined}
-                  className="h-20"
-                />
+                {line.custom ? (
+                  <div className="h-20 w-20">
+                    <BuilderPreview
+                      config={line.custom}
+                      noteIds={[line.custom.notes.top, line.custom.notes.heart, line.custom.notes.base].filter(
+                        (n): n is string => Boolean(n),
+                      )}
+                    />
+                  </div>
+                ) : (
+                  <CandleArt
+                    color={color}
+                    number={product?.kind === "moment" ? product.number : undefined}
+                    className="h-20"
+                  />
+                )}
               </div>
               <div className="flex flex-1 flex-col gap-2">
                 {typeof priced === "string" ? (
                   <p className="text-error">{priced}</p>
+                ) : line.slug === CUSTOM_SLUG ? (
+                  <Link href="/builder" className="font-semibold hover:text-amber-strong">
+                    {priced.title}
+                  </Link>
                 ) : (
                   <Link href={`/product/${line.slug}`} className="font-semibold hover:text-amber-strong">
                     {priced.title}
                   </Link>
+                )}
+                {typeof priced !== "string" && priced.details && (
+                  <p className="text-sm text-muted">{priced.details}</p>
                 )}
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex h-10 items-center rounded-full border border-line">
